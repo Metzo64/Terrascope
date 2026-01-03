@@ -1,0 +1,464 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f1f8f4;
+  color: #1f2937;
+}
+
+/* Floating background life */
+body::before, body::after {
+  content: "";
+  position: fixed;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #a5d6a7 0%, transparent 70%);
+  opacity: 0.4;
+  z-index: -1;
+  animation: float 12s ease-in-out infinite;
+}
+
+body::before {
+  top: 12%;
+  left: -120px;
+}
+
+body::after {
+  bottom: 10%;
+  right: -140px;
+  animation-delay: 6s;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+  100% { transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeUp 0.6s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* NAVBAR */
+.navbar {
+  background: white;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+.logo h1 {
+  margin: 0;
+  color: #1b5e20;
+}
+
+.logo span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* HERO */
+.hero {
+  max-width: 900px;
+  margin: 120px auto 80px;
+  text-align: center;
+}
+
+.hero-actions {
+  margin-top: 30px;
+}
+
+/* BUTTONS */
+.primary-btn {
+  padding: 14px 30px;
+  background: #1b5e20;
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.primary-btn:hover {
+  background: #2e7d32;
+  transform: translateY(-2px);
+}
+
+/* EXPLAIN SECTION */
+.explain, .how-it-works {
+  max-width: 1100px;
+  margin: 80px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.explain-grid {
+  display: flex;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.explain-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  flex: 1;
+}
+
+/* STEPS */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.step {
+  background: #e8f5e9;
+  padding: 15px 25px;
+  border-radius: 30px;
+  font-weight: 600;
+}
+
+/* CONTENT */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.step-label {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.subtitle {
+  color: #4b5563;
+}
+
+/* MAP */
+#map {
+  height: 420px;
+  margin-top: 20px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* ACTION BAR */
+.action-bar {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* DASHBOARD */
+.status-section {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+}
+
+.status-cards {
+  display: flex;
+  gap: 20px;
+}
+
+.status-card {
+  flex: 1;
+  padding: 25px;
+  border-radius: 18px;
+  background: #f9fafb;
+}
+
+.desc {
+  font-size: 14px;
+  color: #4b5563;
+  margin-top: 10px;
+}
+
+.suggestion {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+/* BADGES */
+.badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.good { background: #c8e6c9; color: #1b5e20; }
+.warning { background: #fff3cd; color: #856404; }
+.danger { background: #f8d7da; color: #842029; }
+
+/* Minimal hero */
+.hero-minimal {
+  min-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.hero-minimal h2 {
+  font-size: 48px;
+  margin: 0;
+}
+
+.hero-minimal .soft {
+  font-weight: 400;
+  color: #4b5563;
+}
+
+.hero-sub {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.primary-btn.large {
+  padding: 16px 40px;
+  font-size: 16px;
+}
+
+/* Ambient floating elements */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.ambient span {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, #a5d6a7 0%, transparent 70%);
+  animation: drift 20s infinite linear;
+  opacity: 0.35;
+}
+
+.ambient span:nth-child(1) {
+  top: 20%;
+  left: 10%;
+}
+
+.ambient span:nth-child(2) {
+  top: 60%;
+  left: 70%;
+  animation-duration: 26s;
+}
+
+.ambient span:nth-child(3) {
+  top: 40%;
+  left: 40%;
+  animation-duration: 22s;
+}
+
+@keyframes drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-120px); }
+}
+
+/* Credibility strip */
+.cred-strip {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 40px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.nav-right select {
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* =========================
+   Hero reveal animation
+========================= */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: revealUp 0.8s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.5s; }
+.delay-3 { animation-delay: 0.8s; }
+.delay-4 { animation-delay: 1.1s; }
+
+@keyframes revealUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 12px;
+  padding: 10px 18px;
+
+  border-radius: 10px;
+  border: 1px solid #4caf50;
+
+  background: linear-gradient(135deg, #f5fff7, #e8f5e9);
+  color: #2e7d32;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.secondary-btn:hover {
+  background: linear-gradient(135deg, #e8f5e9, #dcedc8);
+  transform: translateY(-1px);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nir-btn {
+  border: 1px dashed #4caf50;
+  background: #f7fff8;
+  color: #2e7d32;
+}
+
+.nir-btn:hover {
+  background: #e8f5e9;
+}
+
+/* =========================
+   HERO BUTTON UNIFICATION
+========================= */
+
+/* Make both buttons identical in size & shape */
+.hero-actions .primary-btn,
+.hero-actions .secondary-btn {
+  height: 52px;
+  padding: 0 36px;
+  border-radius: 999px; /* perfect pill */
+  font-size: 16px;
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+}
+
+/* PRIMARY stays solid */
+.hero-actions .primary-btn {
+  background: #1b5e20;
+  color: #ffffff;
+  border: none;
+}
+
+/* NIR = same shape, different treatment */
+.hero-actions .secondary-btn {
+  background: #ffffff;
+  color: #1b5e20;
+  border: 2px dashed #2e7d32;
+}
+
+/* Hover states */
+.hero-actions .primary-btn:hover {
+  background: #2e7d32;
+}
+
+.hero-actions .secondary-btn:hover {
+  background: #e8f5e9;
+}
+
+/* NIR helper text */
+.nir-hint {
+  display: none; /* hide for symmetry */
+}
+
+/* =========================
+   Selection Mode Dropdown
+========================= */
+
+.field-label {
+  display: block;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.mode-select {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+.leaflet-control {
+  z-index: 500;
+}
+.mode-select {
+  margin-bottom: 12px;
+}
+/* Prevent decorative layers from blocking interactions */
+body::before,
+body::after,
+.ambient {
+  pointer-events: none;
+}

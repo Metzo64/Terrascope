@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analysis – TerraScope</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <h1 class="logo">🌱 TerraScope</h1>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="analysis.html">Analysis</a>
+    <a href="soil.html">Soil</a>
+    <a href="reports.html">Reports</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<section class="container">
+  <h2>Vegetation & Moisture Indices</h2>
+
+  <table>
+    <tr><th>Index</th><th>Value</th><th>Status</th></tr>
+    <tr><td>NDVI</td><td>0.52</td><td>Moderate</td></tr>
+    <tr><td>NDWI</td><td>-0.12</td><td>Low Moisture</td></tr>
+    <tr><td>SAVI</td><td>0.47</td><td>Sparse Cover</td></tr>
+    <tr><td>EVI</td><td>0.41</td><td>Healthy</td></tr>
+  </table>
+
+  <h3>NDVI Trend (Dummy)</h3>
+  <canvas id="ndviChart"></canvas>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

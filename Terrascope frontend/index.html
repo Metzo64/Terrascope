@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TerraScope</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="fade-in">
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="logo">
+      <h1>TerraScope</h1>
+      <span data-key="tagline"></span>
+    </div>
+
+    <div class="nav-right">
+      <a href="about.html" data-key="about_link" class="nav-link"></a>
+
+      <select onchange="setLanguage(this.value)">
+        <option value="en">EN</option>
+        <option value="hi">हिंदी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main class="hero hero-minimal">
+
+    <h2 data-key="hero_title_1" class="reveal delay-1"></h2>
+
+    <h2 class="soft reveal delay-2" data-key="hero_title_2"></h2>
+
+    <p class="hero-sub reveal delay-3" data-key="hero_sub"></p>
+
+    <!-- ACTION BUTTONS -->
+    <div class="hero-actions reveal delay-4">
+
+      <!-- Primary -->
+      <a href="select.html"
+         class="primary-btn large">
+        <span data-key="cta_btn"></span>
+      </a>
+
+      <!-- Secondary: NIR -->
+      <button class="secondary-btn large nir-btn">
+        <span>Use NIR Camera</span>
+        <span class="nir-hint">Ground-based analysis</span>
+      </button>
+
+    </div>
+
+  </main>
+
+  <!-- Ambient Motion -->
+  <div class="ambient">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- Credibility strip -->
+  <footer class="cred-strip">
+    <span data-key="cred_1"></span>
+    <span data-key="cred_2"></span>
+    <span data-key="cred_3"></span>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

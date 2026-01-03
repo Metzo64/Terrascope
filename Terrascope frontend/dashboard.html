@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Dashboard – TerraScope</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="fade-in">
+
+<header class="navbar">
+  <div class="logo">
+    <h1>TerraScope</h1>
+    <span data-key="dashboard_tagline"></span>
+  </div>
+</header>
+
+<section class="container status-section">
+  <h2 data-key="summary_title"></h2>
+
+  <div class="status-cards">
+
+    <div class="status-card">
+      <h3 data-key="crop_condition"></h3>
+      <span class="badge warning" data-key="crop_status"></span>
+      <p class="desc" data-key="crop_desc"></p>
+      <p class="suggestion" data-key="crop_suggestion"></p>
+    </div>
+
+    <div class="status-card">
+      <h3 data-key="moisture_status"></h3>
+      <span class="badge danger" data-key="moisture_level"></span>
+      <p class="desc" data-key="moisture_desc"></p>
+      <p class="suggestion" data-key="moisture_suggestion"></p>
+    </div>
+
+    <div class="status-card">
+      <h3 data-key="trend_title"></h3>
+      <span class="badge good" data-key="trend_status"></span>
+      <p class="desc" data-key="trend_desc"></p>
+      <p class="suggestion" data-key="trend_suggestion"></p>
+    </div>
+
+  </div>
+</section>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <title>Select Field – TerraScope</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body class="fade-in">
+
+<header class="navbar">
+  <div class="logo">
+    <h1>TerraScope</h1>
+    <span data-key="select_tagline"></span>
+  </div>
+</header>
+
+<section class="container">
+  <p class="step-label" data-key="step_1"></p>
+
+  <h2 data-key="select_title"></h2>
+  <p class="subtitle" data-key="select_sub"></p>
+
+  <!-- Location Button (TRANSLATABLE) -->
+  <button id="locateBtn"
+          class="secondary-btn"
+          data-key="use_location">
+  </button>
+
+<!-- polygon selection -->
+
+<label class="field-label">Field Selection Method</label>
+<select id="selectionMode" class="mode-select">
+  <option value="point">Point (Quick)</option>
+  <option value="polygon">Boundary (Accurate)</option>
+</select>
+
+  <div id="map"></div>
+
+  <div class="action-bar">
+    <span id="coords" data-key="no_location"></span>
+
+    <a id="continueBtn"
+       class="primary-btn disabled"
+       href="dashboard.html"
+       data-key="analyze_btn">
+    </a>
+  </div>
+</section>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
