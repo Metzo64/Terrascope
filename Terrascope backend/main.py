@@ -5,11 +5,14 @@ from typing import Optional, List
 import ee
 import datetime
 
-# -------------------------------
-# INITIALIZE EARTH ENGINE
-# -------------------------------
+# ======================================
+# INITIALIZE GOOGLE EARTH ENGINE
+# ======================================
 ee.Initialize(project="dotted-empire-477317-b8")
 
+# ======================================
+# FASTAPI SETUP
+# ======================================
 app = FastAPI()
 
 app.add_middleware(
@@ -22,9 +25,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -------------------------------
-# REQUEST MODEL
-# -------------------------------
+# ======================================
+# REQUEST MODELS
+# ======================================
 class PointData(BaseModel):
     lat: float
     lon: float
@@ -33,110 +36,105 @@ class FieldRequest(BaseModel):
     point: Optional[PointData] = None
     polygon: Optional[List[List[List[float]]]] = None
 
-
-# -------------------------------
-# CLASSIFIERS
-# -------------------------------
-def classify_ndvi(v):
-    if v < 0.2:
+# ======================================
+# CLASSIFICATION HELPERS
+# ======================================
+def classify_ndvi(v: float) -> str:
+    if v < 0.25:
         return "Low"
     elif v < 0.5:
         return "Moderate"
     else:
         return "High"
 
-def classify_moisture(v):
-    if v < 0:
+def classify_ndmi(v: float) -> str:
+    if v < 0.05:
         return "Low"
-    elif v < 0.2:
+    elif v < 0.25:
         return "Moderate"
     else:
         return "High"
 
-
-# -------------------------------
-# MAIN API
-# -------------------------------
+# ======================================
+# MAIN ANALYSIS ENDPOINT
+# ======================================
 @app.post("/analyze-field")
 def analyze_field(data: FieldRequest):
 
-    # ---------------------------
-    # 1. BUILD GEOMETRY
-    # ---------------------------
+    # ---------- GEOMETRY ----------
     if data.polygon:
         geometry = ee.Geometry.Polygon(data.polygon)
         geometry_type = "polygon"
 
     elif data.point:
-        geometry = ee.Geometry.Point([data.point.lon, data.point.lat])
+        geometry = ee.Geometry.Point(
+            [data.point.lon, data.point.lat]
+        ).buffer(1000)
         geometry_type = "point"
 
     else:
-        return {"error": "No field geometry provided"}
+        return {"error": "No geometry provided"}
 
-    # ---------------------------
-    # 2. DATE RANGE
-    # ---------------------------
+    # ---------- DATE RANGE ----------
     end_date = datetime.date.today()
     start_date = end_date - datetime.timedelta(days=30)
 
-    # ---------------------------
-    # 3. LOAD SENTINEL-2
-    # ---------------------------
+    # ---------- SENTINEL-2 ----------
     s2 = (
-        ee.ImageCollection("COPERNICUS/S2_SR")
+        ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterBounds(geometry)
         .filterDate(str(start_date), str(end_date))
         .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20))
         .median()
+        .clip(geometry)
     )
 
-    # ---------------------------
-    # 4. INDICES
-    # ---------------------------
+    # ---------- INDICES ----------
     ndvi = s2.normalizedDifference(["B8", "B4"]).rename("NDVI")
     ndmi = s2.normalizedDifference(["B8", "B11"]).rename("NDMI")
 
-    indices = ndvi.addBands(ndmi)
-
-    # ---------------------------
-    # 5. REDUCE OVER GEOMETRY
-    # ---------------------------
-    stats = indices.reduceRegion(
+    # ---------- STATISTICS ----------
+    stats = ee.Image.cat([ndvi, ndmi]).reduceRegion(
         reducer=ee.Reducer.mean(),
         geometry=geometry,
         scale=10,
-        maxPixels=1e9,
+        maxPixels=1e9
     ).getInfo()
 
-    ndvi_val = stats.get("NDVI")
-    ndmi_val = stats.get("NDMI")
+    if stats.get("NDVI") is None:
+        return {"error": "No usable satellite data"}
 
-    if ndvi_val is None or ndmi_val is None:
-        return {
-            "error": "Insufficient satellite data for selected field"
-        }
+    # ---------- CLASSIFICATION ----------
+    crop_status = classify_ndvi(stats["NDVI"])
+    moisture_status = classify_ndmi(stats["NDMI"])
 
-    # ---------------------------
-    # 6. CLASSIFICATION
-    # ---------------------------
-    crop_status = classify_ndvi(ndvi_val)
-    moisture_status = classify_moisture(ndmi_val)
+    # ---------- VISUAL IMAGE ----------
+    rgb = s2.select(["B4", "B3", "B2"])
+    rgb_vis = {"min": 0, "max": 3000}
 
-    summary = (
-        "Crop health is good across the field."
-        if crop_status == "High"
-        else "Signs of crop stress detected. Monitoring recommended."
+    ndvi_vis = {
+        "min": 0.2,
+        "max": 0.8,
+        "palette": ["yellow", "green"]
+    }
+
+    visual = rgb.visualize(**rgb_vis).blend(
+        ndvi.visualize(**ndvi_vis)
     )
 
-    # ---------------------------
-    # 7. RESPONSE
-    # ---------------------------
+    map_image_url = visual.getThumbURL({
+        "region": geometry,
+        "dimensions": 600,
+        "format": "png"
+    })
+
+    # ---------- RESPONSE ----------
     return {
         "geometry_type": geometry_type,
-        "ndvi_mean": round(ndvi_val, 3),
-        "ndmi_mean": round(ndmi_val, 3),
+        "ndvi_mean": round(stats["NDVI"], 3),
+        "ndmi_mean": round(stats["NDMI"], 3),
         "crop_status": crop_status,
         "moisture_status": moisture_status,
-        "summary": summary,
+        "analysis_window_days": 30,
+        "map_image_url": map_image_url
     }
