@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Dashboard – TerraScope</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Field Summary – TerraScope</title>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css?v=FINAL">
 </head>
 
 <body class="fade-in">
@@ -10,39 +12,115 @@
 <header class="navbar">
   <div class="logo">
     <h1>TerraScope</h1>
-    <span data-key="dashboard_tagline"></span>
+    <span>Field Analysis Summary</span>
   </div>
 </header>
 
 <section class="container status-section">
-  <h2 data-key="summary_title"></h2>
 
-  <div class="status-cards">
+  <!-- =========================
+       1. FIELD HEALTH SUMMARY
+  ========================== -->
+  <section class="summary-page" id="section-overall">
 
-    <div class="status-card">
-      <h3 data-key="crop_condition"></h3>
-      <span class="badge warning" data-key="crop_status"></span>
-      <p class="desc" data-key="crop_desc"></p>
-      <p class="suggestion" data-key="crop_suggestion"></p>
+    <h2 class="summary-heading">Field Health Summary</h2>
+
+    <div class="overall-status-row">
+      <span id="overallBadge" class="badge large"></span>
+      <span class="overall-label">Overall Field Status</span>
     </div>
 
-    <div class="status-card">
-      <h3 data-key="moisture_status"></h3>
-      <span class="badge danger" data-key="moisture_level"></span>
-      <p class="desc" data-key="moisture_desc"></p>
-      <p class="suggestion" data-key="moisture_suggestion"></p>
+    <p id="overallText" class="summary-desc"></p>
+
+    <div class="overall-subgrid">
+      <div class="mini-card">
+        <span class="mini-title">Crop Health</span>
+        <span id="miniCrop" class="mini-value">—</span>
+      </div>
+
+      <div class="mini-card">
+        <span class="mini-title">Moisture</span>
+        <span id="miniMoisture" class="mini-value">—</span>
+      </div>
+
+      <div class="mini-card">
+        <span class="mini-title">Trend</span>
+        <span id="miniTrend" class="mini-value">Stable</span>
+      </div>
     </div>
 
-    <div class="status-card">
-      <h3 data-key="trend_title"></h3>
-      <span class="badge good" data-key="trend_status"></span>
-      <p class="desc" data-key="trend_desc"></p>
-      <p class="suggestion" data-key="trend_suggestion"></p>
+  </section>
+
+  <!-- =========================
+       2. CROP CONDITION
+  ========================== -->
+  <section class="summary-page" id="section-crop">
+
+    <h2 class="summary-heading">Crop Condition</h2>
+
+    <div class="status-row">
+      <span id="cropBadge" class="badge large"></span>
+      <span class="overall-label">Vegetation Health</span>
     </div>
 
-  </div>
+    <!-- STATIC MAP IMAGE -->
+<div class="map-image-wrapper">
+<img id="cropMapImage" style="display:none;" />
+
+</div>
+
+
+
+    <div class="explain-block">
+      <p id="cropText" class="summary-desc"></p>
+      <p id="cropHint" class="hint-text"></p>
+    </div>
+
+  </section>
+
+  <!-- =========================
+       3. WATER & SOIL
+  ========================== -->
+  <section class="summary-page" id="section-water">
+
+    <h2 class="summary-heading">Water & Soil Condition</h2>
+
+    <div class="status-row">
+      <span id="waterBadge" class="badge large"></span>
+      <span class="overall-label">Soil Moisture Status</span>
+    </div>
+
+    <div class="explain-block">
+      <p id="waterText" class="summary-desc"></p>
+      <p id="waterHint" class="hint-text"></p>
+    </div>
+
+  </section>
+
+  <!-- =========================
+       4. FIELD RISKS
+  ========================== -->
+  <section class="summary-page" id="section-risk">
+
+    <h2 class="summary-heading">Field Risks & Observations</h2>
+
+    <div class="status-row">
+      <span id="riskBadge" class="badge large"></span>
+      <span class="overall-label">Risk Level</span>
+    </div>
+
+    <div class="explain-block">
+      <p id="riskText" class="summary-desc"></p>
+    </div>
+
+  </section>
+
 </section>
 
-<script src="js/app.js"></script>
+<!-- SUMMARY LOGIC -->
+<script src="/js/summary.js"></script>
+
+
+
 </body>
 </html>
