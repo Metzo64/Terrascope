@@ -334,16 +334,13 @@ if (nirBtn) {
 /* =========================================================
    THE FKING BACKEND STUFF
 ========================================================= */
-async function analyzeField(lat, lon) {
+async function analyzeField(payload) {
   const response = await fetch("http://127.0.0.1:8000/analyze-field", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      lat: lat,
-      lon: lon
-    })
+    body: JSON.stringify(payload)
   });
 
   if (!response.ok) {
@@ -352,6 +349,7 @@ async function analyzeField(lat, lon) {
 
   return await response.json();
 }
+
 /* =========================================================
     CALLING BACKEND NOW
 ========================================================= */
@@ -385,30 +383,3 @@ if (continueBtn) {
     }
   });
 }
-/* =========================================================
-   DASHBOARD: LOAD ANALYSIS RESULT
-========================================================= */
-document.addEventListener("DOMContentLoaded", () => {
-
-  if (!window.location.pathname.includes("dashboard")) return;
-
-  const raw = localStorage.getItem("analysis_result");
-  if (!raw) return;
-
-  const result = JSON.parse(raw);
-
-  const cropBadge = document.querySelector('[data-key="crop_status"]');
-  if (cropBadge && result.crop_status) {
-    cropBadge.textContent = result.crop_status;
-  }
-
-  const moistureBadge = document.querySelector('[data-key="moisture_level"]');
-  if (moistureBadge && result.moisture_status) {
-    moistureBadge.textContent = result.moisture_status;
-  }
-
-  const summary = document.querySelector('[data-key="crop_desc"]');
-  if (summary && result.summary) {
-    summary.textContent = result.summary;
-  }
-});
