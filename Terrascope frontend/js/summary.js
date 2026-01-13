@@ -2,29 +2,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!window.location.pathname.includes("dashboard")) return;
 
   const raw = localStorage.getItem("analysis_result");
-  if (!raw) {
-    console.error("No analysis_result in localStorage");
-    return;
-  }
+  if (!raw) return;
 
   const data = JSON.parse(raw);
 
-  /* =========================
-     HELPER
-  ========================= */
   function applyBadge(el, status) {
-    if (!el || !status) return;
+    if (!el) return;
 
     el.textContent = status;
     el.classList.remove("good", "warning", "danger");
 
     if (status === "High") el.classList.add("good");
     else if (status === "Moderate") el.classList.add("warning");
-    else if (status === "Low") el.classList.add("danger");
+    else el.classList.add("danger");
   }
 
   /* =========================
-     1. FIELD HEALTH SUMMARY
+     OVERALL SUMMARY
   ========================= */
   const overallBadge = document.getElementById("overallBadge");
   const overallText = document.getElementById("overallText");
@@ -34,28 +28,27 @@ document.addEventListener("DOMContentLoaded", () => {
   if (data.crop_status === "Low" || data.moisture_status === "Low") {
     overallStatus = "Needs Attention";
     overallBadge.className = "badge large danger";
+    overallText.textContent = "Some parts of the field may need attention.";
   } else if (
     data.crop_status === "Moderate" ||
     data.moisture_status === "Moderate"
   ) {
     overallStatus = "Watch Closely";
     overallBadge.className = "badge large warning";
+    overallText.textContent = "Some parts of the field may need attention.";
   } else {
     overallBadge.className = "badge large good";
+    overallText.textContent = "Field conditions look healthy overall.";
   }
 
   overallBadge.textContent = overallStatus;
-  overallText.textContent =
-    overallStatus === "Healthy"
-      ? "Field conditions look healthy overall."
-      : "Some parts of the field may need attention.";
 
   applyBadge(document.getElementById("miniCrop"), data.crop_status);
   applyBadge(document.getElementById("miniMoisture"), data.moisture_status);
   document.getElementById("miniTrend").textContent = "Stable";
 
   /* =========================
-     2. CROP CONDITION
+     CROP CONDITION
   ========================= */
   applyBadge(document.getElementById("cropBadge"), data.crop_status);
 
@@ -71,19 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
       ? "Inspect stressed areas and take corrective action."
       : "Continue regular monitoring.";
 
-/* =========================
-   STATIC OSM MAP
-========================= */
-const img = document.getElementById("cropMapImage");
-
-if (data.map_image_url) {
-  img.src = data.map_image_url;
-  img.style.display = "block";
-}
-
+  /* =========================
+     MAP IMAGE
+  ========================= */
+  const img = document.getElementById("cropMapImage");
+  if (data.map_image_url) {
+    img.src = data.map_image_url;
+    img.style.display = "block";
+  }
 
   /* =========================
-     3. WATER & SOIL
+     WATER & SOIL
   ========================= */
   applyBadge(document.getElementById("waterBadge"), data.moisture_status);
 
@@ -98,7 +89,7 @@ if (data.map_image_url) {
       : "No immediate irrigation needed.";
 
   /* =========================
-     4. FIELD RISKS
+     FIELD RISKS
   ========================= */
   document.getElementById("riskText").textContent =
     data.crop_status === "Low" && data.moisture_status === "Low"
@@ -107,4 +98,3 @@ if (data.map_image_url) {
       ? "Early stress indicators detected."
       : "No major risks detected at this time.";
 });
-
