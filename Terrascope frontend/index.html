@@ -12,14 +12,15 @@
   <header class="navbar">
     <div class="logo">
       <h1>TerraScope</h1>
-      <span data-key="tagline"></span>
+      <span data-key="tagline">Field Intelligence Platform</span>
     </div>
 
     <div class="nav-right">
-      <a href="about.html" data-key="about_link" class="nav-link"></a>
+      <a href="about.html" data-key="about_link" class="nav-link">About</a>
 
-      <select onchange="setLanguage(this.value)">
-        <option value="en">EN</option>
+      <!-- ONLY language selector in entire app -->
+      <select id="langSelect">
+        <option value="en">English</option>
         <option value="hi">हिंदी</option>
         <option value="mr">मराठी</option>
       </select>
@@ -29,25 +30,32 @@
   <!-- Hero -->
   <main class="hero hero-minimal">
 
-    <h2 data-key="hero_title_1" class="reveal delay-1"></h2>
+    <h2 data-key="hero_title_1" class="reveal delay-1">
+      Understand Your Field
+    </h2>
 
-    <h2 class="soft reveal delay-2" data-key="hero_title_2"></h2>
+    <h2 class="soft reveal delay-2" data-key="hero_title_2">
+      Before Problems Become Visible
+    </h2>
 
-    <p class="hero-sub reveal delay-3" data-key="hero_sub"></p>
+    <p class="hero-sub reveal delay-3" data-key="hero_sub">
+      Satellite-driven field intelligence for crop and soil awareness.
+    </p>
 
     <!-- ACTION BUTTONS -->
     <div class="hero-actions reveal delay-4">
 
       <!-- Primary -->
-      <a href="select.html"
-         class="primary-btn large">
-        <span data-key="cta_btn"></span>
+      <a href="select.html" class="primary-btn large">
+        <span data-key="cta_btn">Select My Field</span>
       </a>
 
       <!-- Secondary: NIR -->
       <button class="secondary-btn large nir-btn">
-        <span>Use NIR Camera</span>
-        <span class="nir-hint">Ground-based analysis</span>
+        <span data-key="nir_btn">Use NIR Camera</span>
+        <span class="nir-hint" data-key="nir_hint">
+          Ground-based analysis
+        </span>
       </button>
 
     </div>
@@ -63,11 +71,13 @@
 
   <!-- Credibility strip -->
   <footer class="cred-strip">
-    <span data-key="cred_1"></span>
-    <span data-key="cred_2"></span>
-    <span data-key="cred_3"></span>
+    <span data-key="cred_1">Satellite-based analysis</span>
+    <span data-key="cred_2">Field-level focus</span>
+    <span data-key="cred_3">Advisory insights</span>
   </footer>
 
+  <!-- IMPORTANT: lang.js must load BEFORE app.js -->
+  <script src="js/lang.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

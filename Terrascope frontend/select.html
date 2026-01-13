@@ -6,10 +6,9 @@
 
   <title>Select Field – TerraScope</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-<link rel="stylesheet" href="css/style.css">
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body class="fade-in">
@@ -17,46 +16,114 @@
 <header class="navbar">
   <div class="logo">
     <h1>TerraScope</h1>
-    <span data-key="select_tagline"></span>
+    <span data-key="select_tagline">Select Field Location</span>
   </div>
 </header>
 
 <section class="container">
-  <p class="step-label" data-key="step_1"></p>
 
-  <h2 data-key="select_title"></h2>
-  <p class="subtitle" data-key="select_sub"></p>
+  <p class="step-label" data-key="step_1">
+    Step 1 of 2 — Select your field
+  </p>
 
-  <!-- Location Button (TRANSLATABLE) -->
+  <h2 data-key="select_title">Select Your Field Location</h2>
+
+  <p class="subtitle" data-key="select_sub">
+    Choose a method to identify your farm land.
+  </p>
+
+  <!-- Use current location -->
   <button id="locateBtn"
           class="secondary-btn"
           data-key="use_location">
+    Use My Current Location
   </button>
 
-<!-- polygon selection -->
+  <!-- Selection method -->
+  <label class="field-label" data-key="selection_method">
+    Field Selection Method
+  </label>
 
-<label class="field-label">Field Selection Method</label>
-<select id="selectionMode" class="mode-select">
-  <option value="point">Point (Quick)</option>
-  <option value="polygon">Boundary (Accurate)</option>
-</select>
+  <select id="selectionMode" class="mode-select">
+    <option value="point" data-key="mode_point">
+      Point (Quick)
+    </option>
+    <option value="polygon" data-key="mode_polygon">
+      Boundary (Accurate)
+    </option>
+    <option value="record" data-key="mode_712">
+      7/12 Land Record (Recommended)
+    </option>
+  </select>
 
+  <!-- MAP -->
   <div id="map"></div>
 
+  <!-- 7/12 UPLOAD (HIDDEN BY DEFAULT) -->
+  <div id="recordBox" class="record-box" style="display:none;">
+
+    <p class="subtitle" data-key="record_hint">
+      Upload your 7/12 land record to identify your field automatically.
+    </p>
+
+    <label class="field-label" data-key="record_upload">
+      Upload 7/12 Document
+    </label>
+    <input type="file" accept=".pdf,.jpg,.png">
+
+    <label class="field-label" data-key="record_village">
+      Village Name
+    </label>
+    <input type="text" placeholder="Eg. Panvel">
+
+    <label class="field-label" data-key="record_survey">
+      Survey Number
+    </label>
+    <input type="text" placeholder="Eg. 45/2A">
+
+  </div>
+
   <div class="action-bar">
-    <span id="coords" data-key="no_location"></span>
+    <span id="coords" data-key="no_location">
+      No location selected
+    </span>
 
     <a id="continueBtn"
        class="primary-btn disabled"
        href="dashboard.html"
        data-key="analyze_btn">
+      Analyze Field
     </a>
   </div>
+
 </section>
 
+<!-- Scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+<!-- LANGUAGE FIRST -->
+<script src="js/lang.js"></script>
+
+<!-- APP LOGIC -->
 <script src="js/app.js"></script>
+
+<!-- SMALL TOGGLE LOGIC -->
+<script>
+  const modeSelect = document.getElementById("selectionMode");
+  const recordBox = document.getElementById("recordBox");
+  const mapBox = document.getElementById("map");
+
+  modeSelect.addEventListener("change", () => {
+    if (modeSelect.value === "record") {
+      recordBox.style.display = "block";
+      mapBox.style.display = "none";
+    } else {
+      recordBox.style.display = "none";
+      mapBox.style.display = "block";
+    }
+  });
+</script>
 
 </body>
 </html>

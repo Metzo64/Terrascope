@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Field Summary – TerraScope</title>
 
   <!-- Main CSS -->
@@ -12,7 +13,7 @@
 <header class="navbar">
   <div class="logo">
     <h1>TerraScope</h1>
-    <span>Field Analysis Summary</span>
+    <span data-key="summary_title">Field Health Summary</span>
   </div>
 </header>
 
@@ -23,29 +24,40 @@
   ========================== -->
   <section class="summary-page" id="section-overall">
 
-    <h2 class="summary-heading">Field Health Summary</h2>
+    <h2 class="summary-heading" data-key="summary_title">
+      Field Health Summary
+    </h2>
 
     <div class="overall-status-row">
       <span id="overallBadge" class="badge large"></span>
-      <span class="overall-label">Overall Field Status</span>
+      <span class="overall-label" data-key="overall_status">
+        Overall Field Status
+      </span>
     </div>
 
+    <!-- dynamic -->
     <p id="overallText" class="summary-desc"></p>
 
     <div class="overall-subgrid">
       <div class="mini-card">
-        <span class="mini-title">Crop Health</span>
+        <span class="mini-title" data-key="crop_condition">
+          Crop Condition
+        </span>
         <span id="miniCrop" class="mini-value">—</span>
       </div>
 
       <div class="mini-card">
-        <span class="mini-title">Moisture</span>
+        <span class="mini-title" data-key="moisture_status">
+          Soil Moisture
+        </span>
         <span id="miniMoisture" class="mini-value">—</span>
       </div>
 
       <div class="mini-card">
-        <span class="mini-title">Trend</span>
-        <span id="miniTrend" class="mini-value">Stable</span>
+        <span class="mini-title" data-key="trend_label">
+          Trend
+        </span>
+        <span id="miniTrend" class="mini-value"></span>
       </div>
     </div>
 
@@ -56,20 +68,20 @@
   ========================== -->
   <section class="summary-page" id="section-crop">
 
-    <h2 class="summary-heading">Crop Condition</h2>
+    <h2 class="summary-heading" data-key="crop_condition">
+      Crop Condition
+    </h2>
 
     <div class="status-row">
       <span id="cropBadge" class="badge large"></span>
-      <span class="overall-label">Vegetation Health</span>
+      <span class="overall-label" data-key="vegetation_health">
+        Vegetation Health
+      </span>
     </div>
 
-    <!-- STATIC MAP IMAGE -->
-<div class="map-image-wrapper">
-<img id="cropMapImage" style="display:none;" />
-
-</div>
-
-
+    <div class="map-image-wrapper">
+      <img id="cropMapImage" style="display:none;" />
+    </div>
 
     <div class="explain-block">
       <p id="cropText" class="summary-desc"></p>
@@ -83,11 +95,15 @@
   ========================== -->
   <section class="summary-page" id="section-water">
 
-    <h2 class="summary-heading">Water & Soil Condition</h2>
+    <h2 class="summary-heading" data-key="water_soil">
+      Water & Soil Condition
+    </h2>
 
     <div class="status-row">
       <span id="waterBadge" class="badge large"></span>
-      <span class="overall-label">Soil Moisture Status</span>
+      <span class="overall-label" data-key="moisture_status">
+        Soil Moisture Status
+      </span>
     </div>
 
     <div class="explain-block">
@@ -102,11 +118,15 @@
   ========================== -->
   <section class="summary-page" id="section-risk">
 
-    <h2 class="summary-heading">Field Risks & Observations</h2>
+    <h2 class="summary-heading" data-key="risk_title">
+      Field Risks & Observations
+    </h2>
 
     <div class="status-row">
       <span id="riskBadge" class="badge large"></span>
-      <span class="overall-label">Risk Level</span>
+      <span class="overall-label" data-key="risk_level">
+        Risk Level
+      </span>
     </div>
 
     <div class="explain-block">
@@ -117,10 +137,11 @@
 
 </section>
 
+<!-- LANGUAGE LOGIC -->
+<script src="js/lang.js"></script>
+
 <!-- SUMMARY LOGIC -->
-<script src="/js/summary.js"></script>
-
-
+<script src="js/summary.js"></script>
 
 </body>
 </html>
