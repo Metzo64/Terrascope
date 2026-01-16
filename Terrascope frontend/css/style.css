@@ -511,6 +511,7 @@ body::after,
 }
 
 .mini-card {
+
   background: #f9fafb;
   padding: 18px;
   border-radius: 16px;
@@ -728,11 +729,24 @@ body::after {
 }
 
 /* MAP */
-#map {
-  height: 420px;
-  margin-top: 20px;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+/* --- 2. MAP IMAGE CLEANUP --- */
+/* Removes the gray background box and centers the circular image */
+.map-image-wrapper {
+  width: 100%;
+  height: auto;
+  margin: 20px 0;
+  background: transparent !important; /* Fixes the gray box issue */
+  display: flex;
+  justify-content: center;
+  border: none;
+}
+
+#cropMapImage {
+  max-width: 500px;
+  width: 100%;
+  height: auto;
+  border-radius: 50%; /* Maintains the clean circular look */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Adds depth to the analysis */
 }
 
 /* ACTION BAR */
@@ -781,16 +795,40 @@ body::after {
   color: #1b5e20;
 }
 
-/* BADGES */
-.badge {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-weight: bold;
+.summary-page {
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 24px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
-.good { background: #c8e6c9; color: #1b5e20; }
-.warning { background: #fff3cd; color: #856404; }
-.danger { background: #f8d7da; color: #842029; }
+/* --- BADGES (Updated for Solid Colors) --- */
+.badge {
+  padding: 8px 16px; /* Slightly increased padding for better box look */
+  border-radius: 12px; /* Smoother corner for solid boxes */
+  font-weight: 700; /* Extra bold for white text readability */
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  color: #ffffff !important; /* Forces all badge text to white */
+}
+
+/* Vibrant solid backgrounds */
+.good { 
+  background-color: #22c55e !important; /* Rich green */
+}
+
+.warning { 
+  background-color: #facc15 !important; /* Bold yellow */
+  color: #78350f !important; /* Exception: Dark brown text for better contrast on yellow */
+}
+
+.danger { 
+  background-color: #ef4444 !important; /* Alert red */
+}
 
 /* Minimal hero */
 .hero-minimal {
@@ -1935,4 +1973,848 @@ body::after,
   height: 100%;
   object-fit: contain;
   display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- 1. SOLID STATUS BADGES --- */
+/* This colors the whole box and sets text to white/dark for contrast */
+.badge {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+}
+
+.good { 
+  background-color: #22c55e !important; 
+  color: #ffffff !important; 
+}
+
+.warning { 
+  background-color: #facc15 !important; 
+  color: #78350f !important; /* Darker brown for readability on yellow */
+}
+
+.danger { 
+  background-color: #ef4444 !important; 
+  color: #ffffff !important; 
+}
+
+/* --- 2. MAP IMAGE CLEANUP --- */
+/* Removes the gray box and ensures the circular image pops */
+.map-image-wrapper {
+  width: 100%;
+  height: auto;
+  margin: 20px 0;
+  background: transparent !important; /* Removes gray box */
+  display: flex;
+  justify-content: center;
+  border: none;
+}
+
+#cropMapImage {
+  max-width: 500px;
+  width: 100%;
+  height: auto;
+  border-radius: 50%; /* Ensures the satellite data remains a clean circle */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Adds depth to the analysis */
+}
+
+/* --- 3. ATTRACTIVE SECTION POLISH --- */
+/* Makes the "dead" white sections look professional */
+.summary-page {
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 24px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+.summary-page:hover {
+  transform: translateY(-4px); /* Subtle interaction */
+}
+
+.hint-text {
+  background: #f0fdf4;
+  color: #166534;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border-left: 5px solid #22c55e;
+  font-weight: 600;
+  margin-top: 15px;
+  display: block;
+}
+
+/* ============================
+   MINI STATUS BOX COLORS
+============================ */
+
+.mini-card {
+  transition: all 0.3s ease;
+}
+
+.mini-card.good {
+  background: linear-gradient(135deg, #e8f8ee, #c8f1d8);
+  border-color: #34c759;
+}
+
+.mini-card.warning {
+  background: linear-gradient(135deg, #fff4cc, #ffe08a);
+  border-color: #ffb703;
+}
+
+.mini-card.danger {
+  background: linear-gradient(135deg, #ffe5e5, #ffb3b3);
+  border-color: #ff3b30;
+}
+
+.mini-card.good .mini-value,
+.mini-card.warning .mini-value,
+.mini-card.danger .mini-value {
+  font-weight: 700;
+}
+
+/* ============================
+   WATER SECTION ENERGY
+============================ */
+
+#section-water {
+  position: relative;
+  background: linear-gradient(180deg, #eef8ff, #ffffff);
+}
+
+#section-water::before {
+  content: "💧";
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  font-size: 42px;
+  opacity: 0.15;
+}
+
+#section-water .badge {
+  background: #ff3b30;
+  color: #fff;
+}
+
+#section-water .hint-text {
+  background: #e6f4ff;
+  border-left: 4px solid #1e90ff;
+  color: #0b5ed7;
+}
+
+/* ============================
+   RISK SECTION VISUALS
+============================ */
+
+#section-risk {
+  background: linear-gradient(180deg, #fff6e6, #ffffff);
+  position: relative;
+}
+
+#section-risk::before {
+  content: "⚠️";
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  font-size: 42px;
+  opacity: 0.15;
+}
+
+#section-risk .summary-desc {
+  font-weight: 600;
+}
+
+/* ============================
+   MAP LEGEND
+============================ */
+
+.map-legend {
+  display: flex;
+  gap: 18px;
+  font-size: 14px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.map-legend .legend {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend.good { background: #34c759; }
+.legend.warning { background: #ffb703; }
+.legend.danger { background: #ff3b30; }
+
+/* ===============================
+   Selection Controls Row
+================================ */
+.selection-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin: 18px 0 10px;
+  flex-wrap: wrap;
+}
+
+.method-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+}
+
+.mode-select {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #d7e5db;
+  background: #ffffff;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+.mode-select:hover {
+  border-color: #5fb37c;
+  box-shadow: 0 6px 14px rgba(95, 179, 124, 0.15);
+}
+
+.mode-select:focus {
+  outline: none;
+  border-color: #3a9f66;
+}
+
+#map {
+  border-radius: 18px;
+  overflow: hidden;
+  animation: mapFadeIn 0.6s ease-out;
+}
+
+@keyframes mapFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selection-controls::before {
+  content: "";
+  width: 6px;
+  height: 48px;
+  background: linear-gradient(180deg, #7fd3a6, #3a9f66);
+  border-radius: 10px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(46,125,50,0.15), transparent 70%);
+  animation: floatField 18s infinite ease-in-out;
+  filter: blur(60px);
+}
+
+.hero::before {
+  top: -120px;
+  left: -120px;
+}
+
+.hero::after {
+  bottom: -120px;
+  right: -120px;
+  animation-delay: 6s;
+}
+
+@keyframes floatField {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(40px, 30px); }
+  100% { transform: translate(0, 0); }
+}
+
+.primary-btn,
+.secondary-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(46, 125, 50, 0.35);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(46, 125, 50, 0.25);
+}
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(46,125,50,0.15), transparent 70%);
+  animation: floatField 18s infinite ease-in-out;
+  filter: blur(60px);
+}
+
+.hero::before {
+  top: -120px;
+  left: -120px;
+}
+
+.hero::after {
+  bottom: -120px;
+  right: -120px;
+  animation-delay: 6s;
+}
+
+@keyframes floatField {
+  0% { transform: translate(0,0); }
+  50% { transform: translate(40px,30px); }
+  100% { transform: translate(0,0); }
+}
+
+.hero-scan {
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  width: 200%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(46,125,50,0.25),
+    transparent
+  );
+  animation: scanMove 12s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scanMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+
+.credibility-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin: 18px 0 28px;
+}
+
+.cred-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2e7d32;
+  opacity: 0.6;
+}
+
+.primary-btn,
+.secondary-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(46,125,50,0.35);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(46,125,50,0.25);
+}
+
+/* ===============================
+   AMBIENT BACKGROUND — FAST MODE
+   =============================== */
+
+.ambient span {
+  animation: floatFast 8s ease-in-out infinite;
+  opacity: 0.28;
+  filter: blur(40px);
+}
+
+/* Different speeds for organic feel */
+.ambient span:nth-child(1) {
+  animation-duration: 6s;
+}
+.ambient span:nth-child(2) {
+  animation-duration: 9s;
+}
+.ambient span:nth-child(3) {
+  animation-duration: 12s;
+}
+
+/* Stronger motion */
+@keyframes floatFast {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(80px, -80px) scale(1.08);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* ===============================
+   HERO CLEANUP — REMOVE GHOST BOX
+   =============================== */
+
+/* Kill any hero background panels */
+.hero,
+.hero::before,
+.hero::after {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Remove accidental divider line */
+.hero h2::after,
+.hero::after {
+  display: none !important;
+}
+
+/* Ensure hero text floats cleanly */
+.hero * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Just in case there's a container wrapper */
+.hero-minimal {
+  background: transparent !important;
+}
+
+/* ===============================
+   AMBIENT BACKGROUND — REVIVE MOTION
+   =============================== */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Floating blobs */
+.ambient span {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  background: rgba(46, 125, 50, 0.14);
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: floatBlob 14s ease-in-out infinite alternate;
+}
+
+/* Different speeds & positions */
+.ambient span:nth-child(1) {
+  top: 10%;
+  left: 8%;
+  animation-duration: 16s;
+}
+
+.ambient span:nth-child(2) {
+  bottom: 12%;
+  right: 12%;
+  animation-duration: 18s;
+}
+
+.ambient span:nth-child(3) {
+  top: 55%;
+  left: 55%;
+  animation-duration: 20s;
+}
+
+/* ACTUAL MOTION */
+@keyframes floatBlob {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(60px, -40px);
+  }
+  100% {
+    transform: translate(-40px, 60px);
+  }
+}
+
+/* ============================
+   AUTH PAGE (SIGNUP / LOGIN)
+============================ */
+
+.auth-page {
+  background: radial-gradient(circle at top left, #eaf6ee, #f6fbf8);
+}
+
+.auth-wrapper {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border-radius: 22px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Title */
+.auth-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7b73;
+  margin-bottom: 22px;
+}
+
+/* Toggle buttons */
+.auth-choice button {
+  border-radius: 999px;
+  transition: all 0.25s ease;
+}
+
+.auth-choice button.active {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(34, 139, 34, 0.25);
+}
+
+/* Inputs */
+.auth-form input,
+.auth-form select {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #d9e6dc;
+  background: #f9fcfa;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+}
+
+/* Buttons */
+.auth-form button.primary-btn {
+  margin-top: 10px;
+  border-radius: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-form button.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(34, 139, 34, 0.25);
+}
+
+.auth-form button.primary-btn:active {
+  transform: scale(0.98);
+}
+
+/* Footer note */
+.auth-note {
+  font-size: 13px;
+  color: #7a8a82;
+}
+
+/* Hide form cleanly */
+.hidden {
+  display: none;
+}
+
+/* Entry animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-sub::after {
+  display: none !important;
+}
+
+/* ===============================
+   FAST AMBIENT BACKGROUND MOTION
+================================ */
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.ambient span {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(
+    circle,
+    rgba(46, 125, 50, 0.25) 0%,
+    rgba(46, 125, 50, 0.05) 45%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: floatFast 14s linear infinite;
+}
+
+/* different positions + speeds */
+.ambient span:nth-child(1) {
+  top: 10%;
+  left: 5%;
+  animation-duration: 12s;
+}
+
+.ambient span:nth-child(2) {
+  bottom: 15%;
+  right: 10%;
+  animation-duration: 16s;
+}
+
+.ambient span:nth-child(3) {
+  top: 55%;
+  left: 60%;
+  animation-duration: 10s;
+}
+
+@keyframes floatFast {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(80px, -60px) scale(1.15);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.hero-sub,
+.hero-sub * {
+  border: none !important;
+}
+
+.hero-sub::before,
+.hero-sub::after {
+  content: none !important;
+  display: none !important;
+}
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ambient span {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(46, 125, 50, 0.3),
+    rgba(46, 125, 50, 0.05),
+    transparent 70%
+  );
+  filter: blur(50px);
+  animation: blobMove 8s infinite alternate ease-in-out;
+}
+
+.ambient span:nth-child(1) {
+  top: 10%;
+  left: 5%;
+}
+
+.ambient span:nth-child(2) {
+  bottom: 15%;
+  right: 10%;
+  animation-delay: -3s;
+}
+
+.ambient span:nth-child(3) {
+  top: 50%;
+  left: 60%;
+  animation-delay: -6s;
+}
+
+@keyframes blobMove {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(120px, -80px) scale(1.2);
+  }
+}
+
+.water-section {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 144, 255, 0.15),
+    rgba(30, 144, 255, 0.05)
+  );
+  border-left: 6px solid #1e90ff;
+  position: relative;
+  overflow: hidden;
+}
+
+.water-section::after {
+  content: "💧";
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 120px;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.risk-section {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 165, 0, 0.18),
+    rgba(255, 165, 0, 0.06)
+  );
+  border-left: 6px solid #ff9800;
+  position: relative;
+  overflow: hidden;
+}
+
+.risk-section::after {
+  content: "⚠️";
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 120px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.crop-section {
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.18),
+    rgba(76, 175, 80, 0.06)
+  );
+  border-left: 6px solid #4caf50;
+  position: relative;
+  overflow: hidden;
+}
+
+.crop-section::after {
+  content: "🌱";
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 120px;
+  opacity: 0.18;
+  pointer-events: none;
 }
