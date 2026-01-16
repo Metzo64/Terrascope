@@ -43,9 +43,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   overallBadge.textContent = overallStatus;
 
-  applyBadge(document.getElementById("miniCrop"), data.crop_status);
-  applyBadge(document.getElementById("miniMoisture"), data.moisture_status);
-  document.getElementById("miniTrend").textContent = "Stable";
+function applyMiniCard(el, status) {
+  const card = el.closest(".mini-card");
+  if (!card) return;
+
+  card.classList.remove("good", "warning", "danger");
+
+  if (status === "High") card.classList.add("good");
+  else if (status === "Moderate") card.classList.add("warning");
+  else card.classList.add("danger");
+
+  el.textContent = status;
+}
+
+applyMiniCard(document.getElementById("miniCrop"), data.crop_status);
+applyMiniCard(document.getElementById("miniMoisture"), data.moisture_status);
+
+const trendEl = document.getElementById("miniTrend");
+trendEl.textContent = "Stable";
+trendEl.closest(".mini-card").classList.add("good");
 
   /* =========================
      CROP CONDITION

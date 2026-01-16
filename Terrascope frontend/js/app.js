@@ -1,4 +1,66 @@
 /* =========================================================
+   SUPABASE AUTH (SAFE + SINGLE INIT)
+========================================================= */
+
+let _supabase = null;
+
+if (typeof window.supabase !== "undefined") {
+  _supabase = window.supabase.createClient(
+    'https://jmdmrwmnyfnghhqggzlw.supabase.co',
+    'sb_publishable_...'
+  );
+
+  _supabase.auth.onAuthStateChange(async (event, session) => {
+
+    if (event === 'SIGNED_IN' && session?.user) {
+      const user = session.user;
+
+      const { data: existingProfile } = await _supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!existingProfile && user.user_metadata?.full_name) {
+        const { error } = await _supabase
+          .from('profiles')
+          .upsert({
+            id: user.id,
+            full_name: user.user_metadata.full_name,
+            district: user.user_metadata.district,
+            phone_number: user.user_metadata.phone_number
+          });
+
+        if (error) {
+          console.error("Error saving profile:", error.message);
+        } else {
+          console.log("New farmer profile synced!");
+        }
+      }
+    }
+
+    if (event === 'SIGNED_OUT') {
+      window.location.href = 'signup.html';
+    }
+  });
+
+  // LOGOUT BUTTON (SAFE)
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (logoutBtn) {
+    _supabase.auth.getSession().then(({ data }) => {
+      if (data?.session) logoutBtn.classList.remove("hidden");
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await _supabase.auth.signOut();
+      window.location.href = "signup.html";
+    });
+  }
+}
+
+
+/* =========================================================
    MAP LOGIC (SELECT FIELD PAGE)
 ========================================================= */
 if (document.getElementById("map")) {
