@@ -18,7 +18,12 @@
     <div class="nav-right">
       <a href="about.html" data-key="about_link" class="nav-link">About</a>
 
-      <!-- ONLY language selector in entire app -->
+      <!-- Logout (hidden by default, shown only if logged in) -->
+      <button id="logoutBtn" class="secondary-btn small hidden">
+        Logout
+      </button>
+
+      <!-- Language selector -->
       <select id="langSelect">
         <option value="en">English</option>
         <option value="hi">हिंदी</option>
@@ -29,6 +34,9 @@
 
   <!-- Hero -->
   <main class="hero hero-minimal">
+
+    <!-- subtle satellite scan line -->
+    <div class="hero-scan"></div>
 
     <h2 data-key="hero_title_1" class="reveal delay-1">
       Understand Your Field
@@ -42,15 +50,20 @@
       Satellite-driven field intelligence for crop and soil awareness.
     </p>
 
+    <!-- credibility dots -->
+    <div class="credibility-row reveal delay-3">
+      <span class="cred-dot"></span>
+      <span class="cred-dot"></span>
+      <span class="cred-dot"></span>
+    </div>
+
     <!-- ACTION BUTTONS -->
     <div class="hero-actions reveal delay-4">
 
-      <!-- Primary -->
       <a href="select.html" class="primary-btn large">
         <span data-key="cta_btn">Select My Field</span>
       </a>
 
-      <!-- Secondary: NIR -->
       <button class="secondary-btn large nir-btn">
         <span data-key="nir_btn">Use NIR Camera</span>
         <span class="nir-hint" data-key="nir_hint">
@@ -59,7 +72,6 @@
       </button>
 
     </div>
-
   </main>
 
   <!-- Ambient Motion -->
@@ -76,8 +88,10 @@
     <span data-key="cred_3">Advisory insights</span>
   </footer>
 
-  <!-- IMPORTANT: lang.js must load BEFORE app.js -->
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/lang.js"></script>
   <script src="js/app.js"></script>
+
 </body>
 </html>

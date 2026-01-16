@@ -32,34 +32,47 @@
     Choose a method to identify your farm land.
   </p>
 
-  <!-- Use current location -->
-  <button id="locateBtn"
-          class="secondary-btn"
-          data-key="use_location">
-    Use My Current Location
-  </button>
+  <!-- ===============================
+       LOCATION + METHOD CONTROLS
+  ================================ -->
+  <div class="selection-controls">
 
-  <!-- Selection method -->
-  <label class="field-label" data-key="selection_method">
-    Field Selection Method
-  </label>
+    <!-- Use current location -->
+    <button id="locateBtn"
+            class="secondary-btn"
+            data-key="use_location">
+      Use My Current Location
+    </button>
 
-  <select id="selectionMode" class="mode-select">
-    <option value="point" data-key="mode_point">
-      Point (Quick)
-    </option>
-    <option value="polygon" data-key="mode_polygon">
-      Boundary (Accurate)
-    </option>
-    <option value="record" data-key="mode_712">
-      7/12 Land Record (Recommended)
-    </option>
-  </select>
+    <!-- Selection method -->
+    <div class="method-wrapper">
+      <label class="field-label" data-key="selection_method">
+        Field Selection Method
+      </label>
 
-  <!-- MAP -->
+      <select id="selectionMode" class="mode-select">
+        <option value="point" data-key="mode_point">
+          Point (Quick)
+        </option>
+        <option value="polygon" data-key="mode_polygon">
+          Boundary (Accurate)
+        </option>
+        <option value="record" data-key="mode_712">
+          7/12 Land Record (Recommended)
+        </option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- ===============================
+       MAP
+  ================================ -->
   <div id="map"></div>
 
-  <!-- 7/12 UPLOAD (HIDDEN BY DEFAULT) -->
+  <!-- ===============================
+       7/12 UPLOAD (OPTIONAL)
+  ================================ -->
   <div id="recordBox" class="record-box" style="display:none;">
 
     <p class="subtitle" data-key="record_hint">
@@ -83,6 +96,9 @@
 
   </div>
 
+  <!-- ===============================
+       ACTION BAR
+  ================================ -->
   <div class="action-bar">
     <span id="coords" data-key="no_location">
       No location selected
@@ -98,7 +114,9 @@
 
 </section>
 
-<!-- Scripts -->
+<!-- ===============================
+     SCRIPTS
+================================ -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
 
@@ -108,7 +126,7 @@
 <!-- APP LOGIC -->
 <script src="js/app.js"></script>
 
-<!-- SMALL TOGGLE LOGIC -->
+<!-- TOGGLE 7/12 VS MAP -->
 <script>
   const modeSelect = document.getElementById("selectionMode");
   const recordBox = document.getElementById("recordBox");

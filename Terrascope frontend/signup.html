@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TerraScope – Farmer Access</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="fade-in auth-page">
+
+  <!-- CENTER SCREEN -->
+  <div class="auth-wrapper" style="
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+
+    <!-- CARD -->
+    <div class="auth-card reveal" style="
+      width: 420px;
+      padding: 32px;
+      border-radius: 20px;
+    ">
+
+      <h1 class="auth-title"> TerraScope</h1>
+      <p class="auth-subtitle">
+        Smart field intelligence for farmers
+      </p>
+
+      <!-- TOGGLE -->
+      <div class="auth-choice" style="
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      ">
+        <button id="newFarmerBtn" class="primary-btn small active" style="flex:1">
+          New Farmer
+        </button>
+        <button id="existingFarmerBtn" class="secondary-btn small" style="flex:1">
+          Existing Farmer
+        </button>
+      </div>
+
+      <!-- NEW FARMER FORM -->
+      <form id="signupForm" class="auth-form">
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="fullName" placeholder="Full Name" required class="mode-select">
+          <input type="email" id="email" placeholder="Email" required class="mode-select">
+          <input type="tel" id="phone" placeholder="Phone Number" class="mode-select">
+
+          <select id="district" class="mode-select" required>
+            <option value="">Select District</option>
+            <option value="Ahmednagar">Ahmednagar</option>
+            <option value="Akola">Akola</option>
+            <option value="Amravati">Amravati</option>
+            <option value="Aurangabad">Aurangabad</option>
+            <option value="Beed">Beed</option>
+            <option value="Bhandara">Bhandara</option>
+            <option value="Buldhana">Buldhana</option>
+            <option value="Chandrapur">Chandrapur</option>
+            <option value="Dhule">Dhule</option>
+            <option value="Gadchiroli">Gadchiroli</option>
+            <option value="Gondia">Gondia</option>
+            <option value="Hingoli">Hingoli</option>
+            <option value="Jalgaon">Jalgaon</option>
+            <option value="Jalna">Jalna</option>
+            <option value="Kolhapur">Kolhapur</option>
+            <option value="Latur">Latur</option>
+            <option value="Mumbai City">Mumbai City</option>
+            <option value="Mumbai Suburban">Mumbai Suburban</option>
+            <option value="Nagpur">Nagpur</option>
+            <option value="Nanded">Nanded</option>
+            <option value="Nandurbar">Nandurbar</option>
+            <option value="Nashik">Nashik</option>
+            <option value="Osmanabad">Osmanabad</option>
+            <option value="Palghar">Palghar</option>
+            <option value="Parbhani">Parbhani</option>
+            <option value="Pune">Pune</option>
+            <option value="Raigad">Raigad</option>
+            <option value="Ratnagiri">Ratnagiri</option>
+            <option value="Sangli">Sangli</option>
+            <option value="Satara">Satara</option>
+            <option value="Sindhudurg">Sindhudurg</option>
+            <option value="Solapur">Solapur</option>
+            <option value="Thane">Thane</option>
+            <option value="Wardha">Wardha</option>
+            <option value="Washim">Washim</option>
+            <option value="Yavatmal">Yavatmal</option>
+          </select>
+
+          <button type="submit" class="primary-btn full">
+            Register & Send Login Link
+          </button>
+        </div>
+
+      </form>
+
+      <!-- EXISTING FARMER -->
+      <form id="loginForm" class="auth-form hidden">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="email" id="loginEmail" placeholder="Email" required class="mode-select">
+          <button type="submit" class="primary-btn full">
+            Send Login Link
+          </button>
+        </div>
+      </form>
+
+      <p class="auth-note" style="margin-top:16px;text-align:center;">
+        No passwords. Secure email verification only.
+      </p>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const supabaseClient = supabase.createClient(
+      "https://jmdmrwmnyfnghhqggzlw.supabase.co",
+      "sb_publishable_y3BIYo-V5pISoYNd7kQAqA_OSif7Nnk"
+    );
+
+    const newBtn = document.getElementById("newFarmerBtn");
+    const oldBtn = document.getElementById("existingFarmerBtn");
+    const signupForm = document.getElementById("signupForm");
+    const loginForm = document.getElementById("loginForm");
+
+    newBtn.onclick = () => {
+      signupForm.classList.remove("hidden");
+      loginForm.classList.add("hidden");
+      newBtn.classList.add("active");
+      oldBtn.classList.remove("active");
+    };
+
+    oldBtn.onclick = () => {
+      signupForm.classList.add("hidden");
+      loginForm.classList.remove("hidden");
+      oldBtn.classList.add("active");
+      newBtn.classList.remove("active");
+    };
+
+    signupForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email: email.value,
+        options: {
+          data: {
+            full_name: fullName.value,
+            district: district.value,
+            phone_number: phone.value
+          }
+        }
+      });
+      alert(error ? error.message : "Check your email for the login link!");
+    };
+
+    loginForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email: loginEmail.value
+      });
+      alert(error ? error.message : "Check your email to log in!");
+    };
+  </script>
+
+</body>
+</html>
