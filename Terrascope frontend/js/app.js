@@ -65,6 +65,7 @@ if (typeof window.supabase !== "undefined") {
 ========================================================= */
 if (document.getElementById("map")) {
 
+  const mapBox = document.getElementById("map");
   const map = L.map("map").setView([20.5937, 78.9629], 5);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -74,6 +75,18 @@ if (document.getElementById("map")) {
   const coordsEl = document.getElementById("coords");
   const btn = document.getElementById("continueBtn");
   const modeSelect = document.getElementById("selectionMode");
+  const recordBox = document.getElementById("recordBox");
+  const villageInput = document.getElementById("villageInput");
+  const cropSelect = document.getElementById("cropSelect");
+
+  /* ---------- CROP SELECTION ---------- */
+  if (cropSelect) {
+    localStorage.setItem("selected_crop", cropSelect.value);
+
+    cropSelect.addEventListener("change", () => {
+      localStorage.setItem("selected_crop", cropSelect.value);
+    });
+  }
 
   let pointMarker = null;
 
@@ -109,14 +122,86 @@ if (document.getElementById("map")) {
     btn.classList.remove("disabled");
   }
 
+  /* ---------- VILLAGE → MAP ZOOM ---------- */
+  async function zoomToVillage(village) {
+    const query = encodeURIComponent(`${village}, Maharashtra, India`);
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
+    );
+
+    const data = await res.json();
+    if (!data.length) {
+      alert("Could not locate village on map");
+      return;
+    }
+
+    const lat = parseFloat(data[0].lat);
+    const lon = parseFloat(data[0].lon);
+
+    map.setView([lat, lon], 15);
+  }
+
+  /* ---------- SATBARA (7/12) UPLOAD ---------- */
+  const recordFileInput = recordBox?.querySelector('input[type="file"]');
+
+  async function uploadSatbara(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("http://127.0.0.1:8000/satbara/ocr", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("Satbara OCR failed");
+    return await res.json();
+  }
+
+  if (recordFileInput) {
+    recordFileInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const village = villageInput?.value?.trim();
+      if (!village) {
+        alert("Please enter village name");
+        return;
+      }
+
+      coordsEl.innerText = "Reading 7/12 document...";
+      btn.classList.add("disabled");
+
+      try {
+        const result = await uploadSatbara(file);
+
+        localStorage.setItem(
+          "satbara_data",
+          JSON.stringify(result.extracted)
+        );
+
+        await zoomToVillage(village);
+
+        modeSelect.value = "polygon";
+        modeSelect.dispatchEvent(new Event("change"));
+
+        coordsEl.innerText =
+          `7/12 loaded — Survey ${result.extracted.survey_number}. Draw boundary`;
+
+      } catch (err) {
+        console.error(err);
+        alert("Failed to read 7/12 document");
+        resetSelection();
+      }
+    });
+  }
+
   /* ---------- POINT MODE ---------- */
-  map.on("click", function (e) {
-    if (!modeSelect || modeSelect.value !== "point") return;
+  map.on("click", (e) => {
+    if (modeSelect.value !== "point") return;
 
-    drawnItems.clearLayers();
-    localStorage.removeItem("field_polygon");
+    resetSelection();
 
-    if (pointMarker) map.removeLayer(pointMarker);
     pointMarker = L.marker(e.latlng).addTo(map);
 
     localStorage.setItem("field_point", JSON.stringify({
@@ -128,8 +213,8 @@ if (document.getElementById("map")) {
   });
 
   /* ---------- POLYGON MODE ---------- */
-  map.on(L.Draw.Event.CREATED, function (event) {
-    if (!modeSelect || modeSelect.value !== "polygon") return;
+  map.on(L.Draw.Event.CREATED, (event) => {
+    if (modeSelect.value !== "polygon") return;
 
     resetSelection();
     drawnItems.addLayer(event.layer);
@@ -144,37 +229,44 @@ if (document.getElementById("map")) {
   });
 
   /* ---------- MODE SWITCH ---------- */
-  if (modeSelect) {
-    modeSelect.addEventListener("change", () => {
-      resetSelection();
-      if (modeSelect.value === "polygon") {
-        map.addControl(drawControl);
-      } else {
-        map.removeControl(drawControl);
-      }
-    });
-  }
+  modeSelect.addEventListener("change", () => {
+    resetSelection();
+
+    if (modeSelect.value === "record") {
+      recordBox.style.display = "block";
+      mapBox.classList.add("map-disabled");
+      map.removeControl(drawControl);
+      return;
+    }
+
+    recordBox.style.display = "none";
+    mapBox.classList.remove("map-disabled");
+
+    if (modeSelect.value === "polygon") {
+      map.addControl(drawControl);
+    } else {
+      map.removeControl(drawControl);
+    }
+  });
 
   /* ---------- USE MY LOCATION ---------- */
   const locateBtn = document.getElementById("locateBtn");
 
   if (locateBtn) {
-    locateBtn.addEventListener("click", function () {
+    locateBtn.addEventListener("click", () => {
       if (!navigator.geolocation) {
         alert("Geolocation not supported");
         return;
       }
 
-      if (modeSelect) modeSelect.value = "point";
-      drawnItems.clearLayers();
-      localStorage.removeItem("field_polygon");
+      modeSelect.value = "point";
+      resetSelection();
 
       navigator.geolocation.getCurrentPosition(
         pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
 
-          if (pointMarker) map.removeLayer(pointMarker);
           pointMarker = L.marker([lat, lon]).addTo(map);
           map.setView([lat, lon], 15);
 
@@ -188,22 +280,27 @@ if (document.getElementById("map")) {
 }
 
 /* =========================================================
-   BACKEND CALL
+   ANALYZE FIELD (CALL BACKEND)
 ========================================================= */
+
 async function analyzeField(payload) {
-  const response = await fetch("http://127.0.0.1:8000/analyze-field", {
+  const res = await fetch("http://127.0.0.1:8000/analyze-field", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
 
-  if (!response.ok) throw new Error("Backend error");
-  return await response.json();
+  if (!res.ok) {
+    throw new Error("Backend analysis failed");
+  }
+
+  return await res.json();
 }
 
 /* =========================================================
-   CONTINUE BUTTON
+   CONTINUE / ANALYZE BUTTON
 ========================================================= */
+
 const continueBtn = document.getElementById("continueBtn");
 
 if (continueBtn) {
@@ -212,21 +309,41 @@ if (continueBtn) {
 
     const point = localStorage.getItem("field_point");
     const polygon = localStorage.getItem("field_polygon");
+    const crop = localStorage.getItem("selected_crop") || "general";
 
-    let payload = null;
-    if (polygon) payload = { polygon: JSON.parse(polygon) };
-    else if (point) payload = { point: JSON.parse(point) };
-    else {
+    let payload = { crop };
+
+    if (polygon) {
+      payload.polygon = JSON.parse(polygon);
+    } else if (point) {
+      payload.point = JSON.parse(point);
+    } else {
       alert("Please select a field first");
       return;
     }
 
     try {
+      continueBtn.classList.add("disabled");
+      continueBtn.textContent = "Analyzing…";
+
       const result = await analyzeField(payload);
-      localStorage.setItem("analysis_result", JSON.stringify(result));
+
+      console.log("ANALYSIS RESULT:", result);
+
+      localStorage.setItem(
+        "analysis_result",
+        JSON.stringify(result)
+      );
+
       window.location.href = "dashboard.html";
-    } catch {
-      alert("Failed to analyze field");
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to analyze field. Please try again.");
+      continueBtn.classList.remove("disabled");
+      continueBtn.textContent = "Analyze Field";
     }
   });
 }
+
+
