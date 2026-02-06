@@ -22,44 +22,50 @@
 
 <section class="container">
 
-  <p class="step-label" data-key="step_1">
+  <p class="step-label">
     Step 1 of 2 — Select your field
   </p>
 
-  <h2 data-key="select_title">Select Your Field Location</h2>
+  <h2>Select Your Field Location</h2>
 
-  <p class="subtitle" data-key="select_sub">
-    Choose a method to identify your farm land.
+  <p class="subtitle">
+    Choose how you want to identify your farmland.
   </p>
 
   <!-- ===============================
-       LOCATION + METHOD CONTROLS
+       LOCATION + METHOD + CROP
   ================================ -->
   <div class="selection-controls">
 
     <!-- Use current location -->
-    <button id="locateBtn"
-            class="secondary-btn"
-            data-key="use_location">
+    <button id="locateBtn" class="secondary-btn">
       Use My Current Location
     </button>
 
-    <!-- Selection method -->
+    <!-- Field selection method -->
     <div class="method-wrapper">
-      <label class="field-label" data-key="selection_method">
+      <label class="field-label">
         Field Selection Method
       </label>
 
       <select id="selectionMode" class="mode-select">
-        <option value="point" data-key="mode_point">
-          Point (Quick)
-        </option>
-        <option value="polygon" data-key="mode_polygon">
-          Boundary (Accurate)
-        </option>
-        <option value="record" data-key="mode_712">
-          7/12 Land Record (Recommended)
-        </option>
+        <option value="point">Point (Quick)</option>
+        <option value="polygon">Boundary (Accurate)</option>
+        <option value="record">7/12 Land Record (Recommended)</option>
+      </select>
+    </div>
+
+    <!-- Crop selection -->
+    <div class="method-wrapper">
+      <label class="field-label">
+        Crop Grown on This Field
+      </label>
+
+      <select id="cropSelect" class="mode-select">
+        <option value="general">General / Mixed Crops</option>
+        <option value="rice">Rice</option>
+        <option value="wheat">Wheat</option>
+        <option value="cotton">Cotton</option>
       </select>
     </div>
 
@@ -71,28 +77,22 @@
   <div id="map"></div>
 
   <!-- ===============================
-       7/12 UPLOAD (OPTIONAL)
+       7/12 UPLOAD
   ================================ -->
   <div id="recordBox" class="record-box" style="display:none;">
 
-    <p class="subtitle" data-key="record_hint">
-      Upload your 7/12 land record to identify your field automatically.
+    <p class="subtitle">
+      Upload your 7/12 land record to auto-read survey details.
     </p>
 
-    <label class="field-label" data-key="record_upload">
-      Upload 7/12 Document
-    </label>
-    <input type="file" accept=".pdf,.jpg,.png">
+    <label class="field-label">Upload 7/12 Document</label>
+    <input type="file" id="satbaraFile" accept=".pdf,.jpg,.png">
 
-    <label class="field-label" data-key="record_village">
-      Village Name
-    </label>
-    <input type="text" placeholder="Eg. Panvel">
+    <label class="field-label">Village Name</label>
+    <input type="text" id="villageInput" placeholder="Eg. Panvel">
 
-    <label class="field-label" data-key="record_survey">
-      Survey Number
-    </label>
-    <input type="text" placeholder="Eg. 45/2A">
+    <label class="field-label">Survey Number</label>
+    <input type="text" id="surveyInput" placeholder="Eg. 45/2A">
 
   </div>
 
@@ -100,14 +100,13 @@
        ACTION BAR
   ================================ -->
   <div class="action-bar">
-    <span id="coords" data-key="no_location">
+    <span id="coords">
       No location selected
     </span>
 
     <a id="continueBtn"
        class="primary-btn disabled"
-       href="dashboard.html"
-       data-key="analyze_btn">
+       href="dashboard.html">
       Analyze Field
     </a>
   </div>
@@ -120,13 +119,10 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
 
-<!-- LANGUAGE FIRST -->
 <script src="js/lang.js"></script>
-
-<!-- APP LOGIC -->
 <script src="js/app.js"></script>
 
-<!-- TOGGLE 7/12 VS MAP -->
+<!-- Toggle map vs 7/12 -->
 <script>
   const modeSelect = document.getElementById("selectionMode");
   const recordBox = document.getElementById("recordBox");
@@ -135,10 +131,10 @@
   modeSelect.addEventListener("change", () => {
     if (modeSelect.value === "record") {
       recordBox.style.display = "block";
-      mapBox.style.display = "none";
+      mapBox.classList.add("map-disabled");
     } else {
       recordBox.style.display = "none";
-      mapBox.style.display = "block";
+      mapBox.classList.remove("map-disabled");
     }
   });
 </script>

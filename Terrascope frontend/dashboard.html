@@ -13,141 +13,198 @@
 <header class="navbar">
   <div class="logo">
     <h1>TerraScope</h1>
-    <span data-key="summary_title">Field Health Summary</span>
+    <span>Field Health Summary</span>
+  </div>
+
+  <div class="nav-right">
+    <div class="profile-wrapper">
+      <button id="profileBtn" class="profile-btn">
+        👤 <span id="profileName">Farmer</span>
+      </button>
+
+      <div id="profileDropdown" class="profile-dropdown hidden">
+        <p><strong id="pName">—</strong></p>
+        <p id="pEmail">—</p>
+        <p id="pPhone">—</p>
+        <p id="pDistrict">—</p>
+        <hr>
+        <button id="logoutBtn" class="secondary-btn small full">Logout</button>
+      </div>
+    </div>
+
+    <select id="langSelect">
+      <option value="en">English</option>
+      <option value="hi">हिंदी</option>
+      <option value="mr">मराठी</option>
+    </select>
   </div>
 </header>
 
 <section class="container status-section">
 
   <!-- =========================
-       1. FIELD HEALTH SUMMARY
+       OVERALL SUMMARY
   ========================== -->
-  <section class="summary-page" id="section-overall">
+  <section class="summary-page overall-page" id="section-overall">
 
-    <h2 class="summary-heading" data-key="summary_title">
-      Field Health Summary
-    </h2>
+    <h2 class="summary-heading">🌍 Overall Field Health</h2>
 
     <div class="overall-status-row">
       <span id="overallBadge" class="badge large"></span>
-      <span class="overall-label" data-key="overall_status">
-        Overall Field Status
-      </span>
+      <span class="overall-label">Overall Status</span>
     </div>
 
-    <!-- dynamic -->
     <p id="overallText" class="summary-desc"></p>
 
     <div class="overall-subgrid">
       <div class="mini-card">
-        <span class="mini-title" data-key="crop_condition">
-          Crop Condition
-        </span>
+        <span class="mini-title">🌱 Crop Condition</span>
         <span id="miniCrop" class="mini-value">—</span>
       </div>
 
       <div class="mini-card">
-        <span class="mini-title" data-key="moisture_status">
-          Soil Moisture
-        </span>
+        <span class="mini-title">💧 Soil Moisture</span>
         <span id="miniMoisture" class="mini-value">—</span>
-      </div>
-
-      <div class="mini-card">
-        <span class="mini-title" data-key="trend_label">
-          Trend
-        </span>
-        <span id="miniTrend" class="mini-value"></span>
       </div>
     </div>
 
   </section>
 
   <!-- =========================
-       2. CROP CONDITION
+       CROP CONDITION
   ========================== -->
-  <section class="summary-page" id="section-crop">
+  <section class="summary-page crop-section" id="section-crop">
 
-    <h2 class="summary-heading" data-key="crop_condition">
-      Crop Condition
-    </h2>
+    <h2 class="summary-heading">🌱 Crop Condition</h2>
 
     <div class="status-row">
       <span id="cropBadge" class="badge large"></span>
-      <span class="overall-label" data-key="vegetation_health">
-        Vegetation Health
-      </span>
+      <span class="overall-label">Vegetation Health</span>
     </div>
 
-    <div class="map-image-wrapper">
-      <img id="cropMapImage" style="display:none;" />
+    <div class="visual-grid">
+
+      <!-- HEATMAP -->
+      <div class="map-panel soft-map">
+        <img id="cropMapImage" class="heatmap-img" />
+        <p class="map-caption">Satellite Vegetation Map (NDVI)</p>
+      </div>
+
+      <!-- SCORE -->
+      <div class="score-panel">
+        <div class="score-header">Crop Health Score</div>
+
+        <div class="score-bar">
+          <div id="cropBar" class="score-fill"></div>
+        </div>
+
+        <div class="score-label">
+          <strong><span id="cropScore">—</span> / 100</strong>
+        </div>
+
+        <!-- BIG FARMER VERDICT -->
+        <div id="cropVerdict" class="verdict-text">
+          —
+        </div>
+      </div>
+
     </div>
-    <div class="map-legend">
-  <span class="legend good"></span> Healthy vegetation
-  <span class="legend warning"></span> Moderate stress
-  <span class="legend danger"></span> High stress
-</div>
 
-
-
+    <!-- EXPLANATION -->
     <div class="explain-block">
       <p id="cropText" class="summary-desc"></p>
-      <p id="cropHint" class="hint-text"></p>
+
+      <div class="explain-grid soft-grid">
+        <div class="explain-card good">
+          <h4>✅ What looks good</h4>
+          <ul id="cropReasons"></ul>
+        </div>
+
+        <div class="explain-card warning">
+          <h4>⚠️ Possible risks</h4>
+          <ul id="cropRisks"></ul>
+        </div>
+
+        <div class="explain-card action">
+          <h4>🛠 What you should do</h4>
+          <ul id="cropActions"></ul>
+        </div>
+      </div>
     </div>
 
   </section>
 
   <!-- =========================
-       3. WATER & SOIL
+       WATER & SOIL
   ========================== -->
-  <section class="summary-page" id="section-water">
+  <section class="summary-page water-section" id="section-water">
 
-    <h2 class="summary-heading" data-key="water_soil">
-      Water & Soil Condition
-    </h2>
+    <h2 class="summary-heading">💧 Water & Soil Condition</h2>
 
     <div class="status-row">
       <span id="waterBadge" class="badge large"></span>
-      <span class="overall-label" data-key="moisture_status">
-        Soil Moisture Status
-      </span>
+      <span class="overall-label">Soil Moisture Status</span>
+    </div>
+
+    <div class="score-panel wide">
+      <div class="score-header">Soil Moisture Score</div>
+
+      <div class="score-bar">
+        <div id="waterBar" class="score-fill"></div>
+      </div>
+
+      <div class="score-label">
+        <strong><span id="waterScore">—</span> / 100</strong>
+      </div>
+
+      <div id="waterVerdict" class="verdict-text">
+        —
+      </div>
     </div>
 
     <div class="explain-block">
       <p id="waterText" class="summary-desc"></p>
-      <p id="waterHint" class="hint-text"></p>
+
+      <div class="explain-grid soft-grid">
+        <div class="explain-card good">
+          <h4>✅ Moisture positives</h4>
+          <ul id="waterReasons"></ul>
+        </div>
+
+        <div class="explain-card warning">
+          <h4>⚠️ Moisture risks</h4>
+          <ul id="waterRisks"></ul>
+        </div>
+
+        <div class="explain-card action">
+          <h4>🚜 Water advice</h4>
+          <ul id="waterActions"></ul>
+        </div>
+      </div>
     </div>
 
   </section>
 
   <!-- =========================
-       4. FIELD RISKS
+       FIELD RISKS
   ========================== -->
-  <section class="summary-page" id="section-risk">
+  <section class="summary-page risk-section" id="section-risk">
 
-    <h2 class="summary-heading" data-key="risk_title">
-      Field Risks & Observations
-    </h2>
-
-    <div class="status-row">
-      <span id="riskBadge" class="badge large"></span>
-      <span class="overall-label" data-key="risk_level">
-        Risk Level
-      </span>
-    </div>
+    <h2 class="summary-heading">⚠️ Field Risks & Alerts</h2>
 
     <div class="explain-block">
       <p id="riskText" class="summary-desc"></p>
+
+      <div class="risk-box pastel-yellow">
+        <ul id="riskList"></ul>
+      </div>
     </div>
 
   </section>
 
 </section>
 
-<!-- LANGUAGE LOGIC -->
 <script src="js/lang.js"></script>
-
-<!-- SUMMARY LOGIC -->
 <script src="js/summary.js"></script>
 
 </body>
