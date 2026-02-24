@@ -1,275 +1,119 @@
 /* =========================================================
-   SUPABASE AUTH (SAFE + SINGLE INIT)
+   app.js  —  Field selection logic + backend call
+   (auth handled by auth.js — no duplicate Supabase client)
 ========================================================= */
 
-let _supabase = null;
+/* ─── CROP CHIP SELECTOR ────────────────────────────── */
+let selectedCrop = localStorage.getItem("selected_crop") || "general";
 
-if (typeof window.supabase !== "undefined") {
-  _supabase = window.supabase.createClient(
-    'https://jmdmrwmnyfnghhqggzlw.supabase.co',
-    'sb_publishable_...'
-  );
-
-  _supabase.auth.onAuthStateChange(async (event, session) => {
-
-    if (event === 'SIGNED_IN' && session?.user) {
-      const user = session.user;
-
-      const { data: existingProfile } = await _supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', user.id)
-        .single();
-
-      if (!existingProfile && user.user_metadata?.full_name) {
-        const { error } = await _supabase
-          .from('profiles')
-          .upsert({
-            id: user.id,
-            full_name: user.user_metadata.full_name,
-            district: user.user_metadata.district,
-            phone_number: user.user_metadata.phone_number
-          });
-
-        if (error) {
-          console.error("Error saving profile:", error.message);
-        } else {
-          console.log("New farmer profile synced!");
-        }
-      }
-    }
-
-    if (event === 'SIGNED_OUT') {
-      window.location.href = 'signup.html';
-    }
-  });
-
-  // LOGOUT BUTTON (SAFE)
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  if (logoutBtn) {
-    _supabase.auth.getSession().then(({ data }) => {
-      if (data?.session) logoutBtn.classList.remove("hidden");
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await _supabase.auth.signOut();
-      window.location.href = "signup.html";
-    });
-  }
+function setCrop(el) {
+  document.querySelectorAll(".crop-chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  selectedCrop = el.dataset.crop;
+  localStorage.setItem("selected_crop", selectedCrop);
 }
 
+/* ─── Hoisted helpers (replaced when map inits) ─────── */
+let resetSelection = () => { };
+let enableContinue = () => { };
 
-/* =========================================================
-   MAP LOGIC (SELECT FIELD PAGE)
-========================================================= */
+/* ─── MODE CARD SELECTOR ────────────────────────────── */
+let selectedMode = "point";
+
+function setMode(mode) {
+  selectedMode = mode;
+  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("active"));
+  document.querySelector(`.mode-card[data-mode="${mode}"]`)?.classList.add("active");
+
+  const satbaraBox = document.getElementById("satbaraBox");
+  const mapEl = document.getElementById("map");
+
+  if (mode === "satbara") {
+    satbaraBox && (satbaraBox.style.display = "block");
+    mapEl?.classList.add("map-disabled");
+    if (map) { try { map.removeControl(drawControl); } catch (_) { } }
+  } else {
+    satbaraBox && (satbaraBox.style.display = "none");
+    mapEl?.classList.remove("map-disabled");
+    if (mode === "polygon" && map) {
+      try { map.addControl(drawControl); } catch (_) { }
+    } else if (map) {
+      try { map.removeControl(drawControl); } catch (_) { }
+    }
+  }
+  resetSelection();
+}
+
+/* ─── MAP INIT ──────────────────────────────────────── */
+let map, drawControl, pointMarker;
+const drawnItems = typeof L !== "undefined" ? new L.FeatureGroup() : null;
+
 if (document.getElementById("map")) {
-
-  const mapBox = document.getElementById("map");
-  const map = L.map("map").setView([20.5937, 78.9629], 5);
+  map = L.map("map").setView([20.5937, 78.9629], 5);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors"
   }).addTo(map);
 
-  const coordsEl = document.getElementById("coords");
-  const btn = document.getElementById("continueBtn");
-  const modeSelect = document.getElementById("selectionMode");
-  const recordBox = document.getElementById("recordBox");
-  const villageInput = document.getElementById("villageInput");
-  const cropSelect = document.getElementById("cropSelect");
+  if (drawnItems) map.addLayer(drawnItems);
 
-  /* ---------- CROP SELECTION ---------- */
-  if (cropSelect) {
-    localStorage.setItem("selected_crop", cropSelect.value);
-
-    cropSelect.addEventListener("change", () => {
-      localStorage.setItem("selected_crop", cropSelect.value);
-    });
-  }
-
-  let pointMarker = null;
-
-  const drawnItems = new L.FeatureGroup();
-  map.addLayer(drawnItems);
-
-  const drawControl = new L.Control.Draw({
+  drawControl = new L.Control.Draw({
     draw: {
-      polygon: true,
-      rectangle: false,
-      circle: false,
-      marker: false,
-      polyline: false,
-      circlemarker: false
+      polygon: true, rectangle: false, circle: false,
+      marker: false, polyline: false, circlemarker: false
     },
     edit: { featureGroup: drawnItems }
   });
 
-  function resetSelection() {
-    drawnItems.clearLayers();
-    if (pointMarker) {
-      map.removeLayer(pointMarker);
-      pointMarker = null;
-    }
+  /* ─── Reset ─────────────────────────────────────── */
+  resetSelection = function () {
+    if (drawnItems) drawnItems.clearLayers();
+    if (pointMarker) { map.removeLayer(pointMarker); pointMarker = null; }
     localStorage.removeItem("field_point");
     localStorage.removeItem("field_polygon");
-    coordsEl.innerText = "No location selected";
-    btn.classList.add("disabled");
-  }
+    const coordsEl = document.getElementById("coords");
+    const btn = document.getElementById("continueBtn");
+    if (coordsEl) coordsEl.innerText = "No location selected";
+    if (btn) btn.classList.add("disabled");
+  };
 
-  function enableContinue(text) {
-    coordsEl.innerText = text;
-    btn.classList.remove("disabled");
-  }
+  enableContinue = function (text) {
+    const coordsEl = document.getElementById("coords");
+    const btn = document.getElementById("continueBtn");
+    if (coordsEl) coordsEl.innerHTML = `<strong>${text}</strong>`;
+    if (btn) btn.classList.remove("disabled");
+  };
 
-  /* ---------- VILLAGE → MAP ZOOM ---------- */
-  async function zoomToVillage(village) {
-    const query = encodeURIComponent(`${village}, Maharashtra, India`);
-
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`
-    );
-
-    const data = await res.json();
-    if (!data.length) {
-      alert("Could not locate village on map");
-      return;
-    }
-
-    const lat = parseFloat(data[0].lat);
-    const lon = parseFloat(data[0].lon);
-
-    map.setView([lat, lon], 15);
-  }
-
-  /* ---------- SATBARA (7/12) UPLOAD ---------- */
-  const recordFileInput = recordBox?.querySelector('input[type="file"]');
-
-  async function uploadSatbara(file) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("http://127.0.0.1:8000/satbara/ocr", {
-      method: "POST",
-      body: formData
-    });
-
-    if (!res.ok) throw new Error("Satbara OCR failed");
-    return await res.json();
-  }
-
-  if (recordFileInput) {
-    recordFileInput.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const village = villageInput?.value?.trim();
-      if (!village) {
-        alert("Please enter village name");
-        return;
-      }
-
-      coordsEl.innerText = "Reading 7/12 document...";
-      btn.classList.add("disabled");
-
-      try {
-        const result = await uploadSatbara(file);
-
-        localStorage.setItem(
-          "satbara_data",
-          JSON.stringify(result.extracted)
-        );
-
-        await zoomToVillage(village);
-
-        modeSelect.value = "polygon";
-        modeSelect.dispatchEvent(new Event("change"));
-
-        coordsEl.innerText =
-          `7/12 loaded — Survey ${result.extracted.survey_number}. Draw boundary`;
-
-      } catch (err) {
-        console.error(err);
-        alert("Failed to read 7/12 document");
-        resetSelection();
-      }
-    });
-  }
-
-  /* ---------- POINT MODE ---------- */
+  /* ─── Point click ───────────────────────────────── */
   map.on("click", (e) => {
-    if (modeSelect.value !== "point") return;
-
+    if (selectedMode !== "point") return;
     resetSelection();
-
     pointMarker = L.marker(e.latlng).addTo(map);
-
-    localStorage.setItem("field_point", JSON.stringify({
-      lat: e.latlng.lat,
-      lon: e.latlng.lng
-    }));
-
+    localStorage.setItem("field_point", JSON.stringify({ lat: e.latlng.lat, lon: e.latlng.lng }));
     enableContinue(`${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`);
   });
 
-  /* ---------- POLYGON MODE ---------- */
+  /* ─── Polygon drawn ─────────────────────────────── */
   map.on(L.Draw.Event.CREATED, (event) => {
-    if (modeSelect.value !== "polygon") return;
-
+    if (selectedMode !== "polygon" && selectedMode !== "satbara") return;
     resetSelection();
     drawnItems.addLayer(event.layer);
-
-    const geojson = event.layer.toGeoJSON();
-    localStorage.setItem(
-      "field_polygon",
-      JSON.stringify(geojson.geometry.coordinates)
-    );
-
-    enableContinue("Farm boundary selected");
+    const coords = event.layer.toGeoJSON().geometry.coordinates[0];
+    localStorage.setItem("field_polygon", JSON.stringify(coords));
+    enableContinue("Farm boundary selected ✓");
   });
 
-  /* ---------- MODE SWITCH ---------- */
-  modeSelect.addEventListener("change", () => {
-    resetSelection();
-
-    if (modeSelect.value === "record") {
-      recordBox.style.display = "block";
-      mapBox.classList.add("map-disabled");
-      map.removeControl(drawControl);
-      return;
-    }
-
-    recordBox.style.display = "none";
-    mapBox.classList.remove("map-disabled");
-
-    if (modeSelect.value === "polygon") {
-      map.addControl(drawControl);
-    } else {
-      map.removeControl(drawControl);
-    }
-  });
-
-  /* ---------- USE MY LOCATION ---------- */
-  const locateBtn = document.getElementById("locateBtn");
-
+  /* ─── Use my location ───────────────────────────── */
+  const locateBtn = document.getElementById("useLocationBtn");
   if (locateBtn) {
     locateBtn.addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        alert("Geolocation not supported");
-        return;
-      }
-
-      modeSelect.value = "point";
-      resetSelection();
-
+      if (!navigator.geolocation) { alert("Geolocation not supported"); return; }
+      setMode("point");
       navigator.geolocation.getCurrentPosition(
         pos => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-
+          const { latitude: lat, longitude: lon } = pos.coords;
           pointMarker = L.marker([lat, lon]).addTo(map);
           map.setView([lat, lon], 15);
-
           localStorage.setItem("field_point", JSON.stringify({ lat, lon }));
           enableContinue(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
         },
@@ -277,73 +121,147 @@ if (document.getElementById("map")) {
       );
     });
   }
+
+  /* Apply satbara-mode UI on first load */
+  setMode("satbara");
 }
 
-/* =========================================================
-   ANALYZE FIELD (CALL BACKEND)
-========================================================= */
+/* ─── VILLAGE ZOOM (Satbara) ────────────────────────── */
+async function zoomToVillage(village) {
+  const q = encodeURIComponent(`${village}, Maharashtra, India`);
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`);
+  const data = await res.json();
+  if (!data.length) { alert("Could not locate village. Check spelling."); return; }
+  map.setView([parseFloat(data[0].lat), parseFloat(data[0].lon)], 14);
+}
 
-async function analyzeField(payload) {
-  const res = await fetch("http://127.0.0.1:8000/analyze-field", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+const loadVillageBtn = document.getElementById("locateVillageBtn");
+if (loadVillageBtn) {
+  loadVillageBtn.addEventListener("click", async () => {
+    const village = document.getElementById("villageName")?.value?.trim();
+    const survey = document.getElementById("surveyNumber")?.value?.trim();
+    if (!village) { alert("Please enter village name"); return; }
+    if (!survey) { alert("Please enter survey number"); return; }
+
+    const coordsEl = document.getElementById("coords");
+    const btn = document.getElementById("continueBtn");
+    if (coordsEl) coordsEl.innerText = "Locating village…";
+    if (btn) btn.classList.add("disabled");
+
+    localStorage.setItem("village_name", village);
+    localStorage.setItem("survey_number", survey);
+
+    try {
+      await zoomToVillage(village);
+      const mapEl = document.getElementById("map");
+      mapEl?.classList.remove("map-disabled");
+      try { map.addControl(drawControl); } catch (_) { }
+      if (coordsEl) coordsEl.innerText = `Village located. Draw your field boundary (Survey ${survey}).`;
+      if (btn) btn.classList.remove("disabled");
+    } catch (err) {
+      console.error(err);
+      alert("Could not locate village.");
+    }
   });
-
-  if (!res.ok) {
-    throw new Error("Backend analysis failed");
-  }
-
-  return await res.json();
 }
 
-/* =========================================================
-   CONTINUE / ANALYZE BUTTON
-========================================================= */
+/* ─── CENTROID helper ───────────────────────────────── */
+function computeCentroid(coords) {
+  const n = coords.length;
+  let lat = 0, lon = 0;
+  coords.forEach(([lng, la]) => { lat += la; lon += lng; });
+  return { lat: lat / n, lon: lon / n };
+}
 
+/* ─── LOADING OVERLAY helper ────────────────────────── */
+function showLoadingOverlay() {
+  const overlay = document.getElementById("loadingOverlay");
+  const loMsg = document.getElementById("loMsg");
+  const loWarm = document.getElementById("loWarm");
+  if (!overlay) return { stop: () => { } };
+
+  const msgs = [
+    "Contacting satellites…",
+    "Fetching vegetation index (NDVI)…",
+    "Calculating soil moisture…",
+    "Scoring crop health…",
+    "Building your report…"
+  ];
+  let idx = 0;
+  overlay.classList.add("visible");
+  const msgTimer = setInterval(() => {
+    idx = (idx + 1) % msgs.length;
+    if (loMsg) loMsg.textContent = msgs[idx];
+  }, 4000);
+  const warmTimer = setTimeout(() => {
+    if (loWarm) loWarm.classList.add("show");
+  }, 20000);
+
+  return {
+    stop() {
+      clearInterval(msgTimer);
+      clearTimeout(warmTimer);
+      overlay.classList.remove("visible");
+      if (loWarm) loWarm.classList.remove("show");
+    }
+  };
+}
+
+/* ─── ANALYZE BUTTON ────────────────────────────────── */
 const continueBtn = document.getElementById("continueBtn");
-
 if (continueBtn) {
   continueBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    const point = localStorage.getItem("field_point");
-    const polygon = localStorage.getItem("field_polygon");
+    const pointRaw = localStorage.getItem("field_point");
+    const polygonRaw = localStorage.getItem("field_polygon");
     const crop = localStorage.getItem("selected_crop") || "general";
+    const village = localStorage.getItem("village_name");
+    const survey = localStorage.getItem("survey_number");
 
-    let payload = { crop };
-
-    if (polygon) {
-      payload.polygon = JSON.parse(polygon);
-    } else if (point) {
-      payload.point = JSON.parse(point);
+    // Build 'point' — backend only accepts 'point' key
+    let point;
+    if (polygonRaw) {
+      point = computeCentroid(JSON.parse(polygonRaw));
+    } else if (pointRaw) {
+      point = JSON.parse(pointRaw);
     } else {
       alert("Please select a field first");
       return;
     }
 
+    const payload = { crop, point };
+    if (selectedMode === "satbara" && village && survey) {
+      payload.village_name = village;
+      payload.survey_number = survey;
+    }
+
+    const loader = showLoadingOverlay();
+    continueBtn.classList.add("disabled");
+    continueBtn.textContent = "Analyzing…";
+
     try {
-      continueBtn.classList.add("disabled");
-      continueBtn.textContent = "Analyzing…";
+      console.log("[App] Payload →", JSON.stringify(payload));
 
-      const result = await analyzeField(payload);
+      const res = await fetch("https://terrascope-frontend.onrender.com/analyze-field", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-      console.log("ANALYSIS RESULT:", result);
+      if (!res.ok) throw new Error("Backend returned " + res.status);
+      const result = await res.json();
 
-      localStorage.setItem(
-        "analysis_result",
-        JSON.stringify(result)
-      );
-
+      loader.stop();
+      localStorage.setItem("analysis_result", JSON.stringify(result));
       window.location.href = "dashboard.html";
 
     } catch (err) {
+      loader.stop();
       console.error(err);
-      alert("Failed to analyze field. Please try again.");
+      alert("Analysis failed. Please try again.");
       continueBtn.classList.remove("disabled");
-      continueBtn.textContent = "Analyze Field";
+      continueBtn.textContent = "Analyze Field →";
     }
   });
 }
-
-

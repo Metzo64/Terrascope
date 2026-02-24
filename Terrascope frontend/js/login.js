@@ -1,67 +1,58 @@
+// ===============================
 // 🔑 SUPABASE CONFIG
+// ===============================
 const SUPABASE_URL = "https://sifzjfzzkdzjvnjgzjwi.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_MP_CAHgmdUbZypV-Cuz8KA_asbic9Je";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-let currentEmail = "";
-
-// 📩 SEND OTP
-async function sendOTP() {
+// ===============================
+// 📩 SEND MAGIC LINK (FIRST LOGIN)
+// ===============================
+async function sendMagicLink() {
   const email = document.getElementById("email").value.trim();
-  const fullName = document.getElementById("fullName")?.value.trim(); // Get Name
-  const district = document.getElementById("district")?.value;      // Get District
-  const phone = document.getElementById("phone")?.value.trim();     // Get Phone
+  const fullName = document.getElementById("fullName")?.value.trim();
+  const district = document.getElementById("district")?.value.trim();
+  const phone = document.getElementById("phone")?.value.trim();
 
-  if (!email) {
-    alert("Enter email first");
+  if (!email || !email.includes("@")) {
+    alert("Please enter a valid email address");
     return;
   }
 
-  currentEmail = email;
+  // Disable button to avoid double clicks
+  const btn = document.getElementById("loginBtn");
+  if (btn) btn.disabled = true;
 
   const { error } = await supabaseClient.auth.signInWithOtp({
-    email: email,
+    email,
     options: {
       shouldCreateUser: true,
-      // 💡 ADD THIS: This saves the farmer's info in Supabase metadata
+
+      // 🔁 MUST MATCH SUPABASE DASHBOARD
+      emailRedirectTo: "http://localhost:3000/auth-callback.html",
+
+      // Optional: store farmer info in auth metadata
       data: {
-        full_name: fullName,
-        district: district,
-        phone_number: phone
-      }
-    }
+        full_name: fullName || null,
+        district: district || null,
+        phone_number: phone || null,
+      },
+    },
   });
+
+  if (btn) btn.disabled = false;
 
   if (error) {
     console.error(error);
-    alert(error.message);
-  } else {
-    alert("6-digit OTP sent to your email");
-  }
-}
-
-// 🔐 VERIFY OTP
-async function verifyOTP() {
-  const otp = document.getElementById("otp").value.trim();
-
-  if (!otp) {
-    alert("Enter OTP");
+    alert("Login failed: " + error.message);
     return;
   }
 
-  const { data, error } = await supabaseClient.auth.verifyOtp({
-    email: currentEmail,
-    token: otp,
-    type: "email" // Use "email" for numeric codes sent via email
-  });
-
-  if (error) {
-    alert("Invalid OTP: " + error.message);
-  } else {
-    alert("Login successful!");
-    
-    // Redirect to the field selection page
-    window.location.href = "index.html"; 
-  }
+  alert(
+    "Login link sent to your email 📩\n\nOpen it in the SAME browser."
+  );
 }
