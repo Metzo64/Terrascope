@@ -8,74 +8,123 @@ const SUPABASE_KEY = "sb_publishable_MP_CAHgmdUbZypV-Cuz8KA_asbic9Je";
 // Create one shared client (reused by all pages)
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/**
+ * ─── AUTO-INIT ───────────────────────────────────────────────
+ * Checks <body> data-auth attribute:
+ * "required" -> runs requireAuth()
+ * "soft"     -> runs initAuth()
+ * (none)     -> does nothing
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    const authType = document.body.getAttribute("data-auth");
+    if (authType === "required") {
+        requireAuth();
+    } else if (authType === "soft") {
+        initAuth();
+    }
+});
+
 // ─── Session guard ───────────────────────────────────────────
-// Call this on pages that REQUIRE login.
-// If no session → redirect to signup.html
 async function requireAuth() {
     const { data } = await _supabase.auth.getSession();
     if (!data.session) {
         window.location.href = "signup.html";
         return null;
     }
-    _applyUserToNavbar(data.session.user);
+    _applyUserToUI(data.session.user);
     return data.session.user;
 }
 
 // ─── Soft auth check ─────────────────────────────────────────
-// Call this on pages that show user info but don't require login.
 async function initAuth() {
     const { data } = await _supabase.auth.getSession();
     if (data.session) {
-        _applyUserToNavbar(data.session.user);
+        _applyUserToUI(data.session.user);
     }
 }
 
-// ─── Show user name + logout in navbar ───────────────────────
-function _applyUserToNavbar(user) {
+// ─── Populate Navbar & Profile Modal ─────────────────────────
+function _applyUserToUI(user) {
     const meta = user.user_metadata || {};
-
-    // Name: prefer full_name from metadata, fallback to email prefix
     const name = meta.full_name || user.email?.split("@")[0] || "Farmer";
 
-    // profileWrapper — exists on index & other pages
-    const wrapper = document.getElementById("profileWrapper");
-    const nameSpan = document.getElementById("profileName");
-    const pName = document.getElementById("pName");
-    const pEmail = document.getElementById("pEmail");
-    const pPhone = document.getElementById("pPhone");
-    const pDistrict = document.getElementById("pDistrict");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const profileBtn = document.getElementById("profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
+    // 1. Navbar elements
+    const elements = {
+        wrapper: document.getElementById("profileWrapper"),
+        nameSpan: document.getElementById("profileName"),
+        pName: document.getElementById("pName"),
+        pEmail: document.getElementById("pEmail"),
+        pPhone: document.getElementById("pPhone"),
+        pDistrict: document.getElementById("pDistrict"),
+        logoutBtn: document.getElementById("logoutBtn"),
+        profileBtn: document.getElementById("profileBtn"),
+        profileDropdown: document.getElementById("profileDropdown")
+    };
 
-    if (wrapper) { wrapper.classList.remove("hidden"); }
-    if (nameSpan) { nameSpan.textContent = name; }
-    if (pName) { pName.textContent = name; }
-    if (pEmail) { pEmail.textContent = user.email || "—"; }
-    if (pPhone) { pPhone.textContent = meta.phone_number || "—"; }
-    if (pDistrict) { pDistrict.textContent = meta.district || "—"; }
+    if (elements.wrapper) elements.wrapper.classList.remove("hidden");
+    if (elements.nameSpan) elements.nameSpan.textContent = name;
+    if (elements.pName) elements.pName.textContent = name;
+    if (elements.pEmail) elements.pEmail.textContent = user.email || "—";
+    if (elements.pPhone) elements.pPhone.textContent = meta.phone_number || "—";
+    if (elements.pDistrict) elements.pDistrict.textContent = meta.district || "—";
+
+    // 2. Profile Modal elements (usually in dashboard.html)
+    const modalElems = {
+        avatar: document.getElementById("pmAvatar"),
+        title: document.getElementById("pmName"),
+        email: document.getElementById("pmEmail"),
+        phone: document.getElementById("pmPhone"),
+        dist: document.getElementById("pmDistrict"),
+        since: document.getElementById("pmSince")
+    };
+
+    if (modalElems.avatar) {
+        const initials = name.trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+        modalElems.avatar.textContent = initials || '?';
+    }
+    if (modalElems.title) modalElems.title.textContent = name;
+    if (modalElems.email) modalElems.email.textContent = user.email || "—";
+    if (modalElems.phone) modalElems.phone.textContent = meta.phone_number || "—";
+    if (modalElems.dist) modalElems.dist.textContent = meta.district || "—";
+    if (modalElems.since) {
+        const created = user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '—';
+        modalElems.since.textContent = created;
+    }
 
     // Toggle dropdown
-    if (profileBtn && profileDropdown) {
-        profileBtn.addEventListener("click", (e) => {
+    if (elements.profileBtn && elements.profileDropdown) {
+        elements.profileBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            profileDropdown.classList.toggle("hidden");
+            elements.profileDropdown.classList.toggle("hidden");
         });
         document.addEventListener("click", () => {
-            profileDropdown.classList.add("hidden");
+            elements.profileDropdown.classList.add("hidden");
         });
     }
 
     // Logout
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
+    if (elements.logoutBtn) {
+        elements.logoutBtn.addEventListener("click", async () => {
             await _supabase.auth.signOut();
             window.location.href = "signup.html";
         });
     }
 }
 
-// ─── Simple "login" redirect shortcut ────────────────────────
+// ─── Modal Handlers ──────────────────────────────────────────
+function openProfileModal() {
+    const modal = document.getElementById('profileModalOverlay');
+    if (modal) modal.classList.add('open');
+}
+
+function closeProfileModal(e) {
+    const modal = document.getElementById('profileModalOverlay');
+    if (!modal) return;
+    if (!e || e.target === modal) {
+        modal.classList.remove('open');
+    }
+}
+
 function goToLogin() {
     window.location.href = "signup.html";
 }
