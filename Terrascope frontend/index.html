@@ -10,16 +10,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
   <!-- ⚡ theme MUST run before first paint -->
   <script src="js/theme.js"></script>
-  <!-- Landing page always dark radar theme -->
-  <script>document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('ts-theme', 'dark');</script>
   <style>
     /* ─── PAGE BASE ─────────────────────────────────── */
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
+      background: var(--bg-page);
     }
 
     /* ─── DARK-MODE DECORATIONS (hidden in light) ─────── */
@@ -168,12 +167,62 @@
     }
 
     /* ─── LIGHT-MODE AMBIENT GLOW ─────────────────────── */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      display: none;
+    }
+
     html:not([data-theme="dark"]) .ambient {
       display: block;
     }
 
-    html[data-theme="dark"] .ambient {
-      display: none;
+    .ambient span {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.6;
+      animation: ambientFloat 15s ease-in-out infinite;
+    }
+
+    .ambient span:nth-child(1) {
+      width: 500px;
+      height: 500px;
+      background: #e8f5e9;
+      top: -100px;
+      left: -100px;
+    }
+
+    .ambient span:nth-child(2) {
+      width: 400px;
+      height: 400px;
+      background: #f1f8e9;
+      bottom: -50px;
+      right: -50px;
+      animation-delay: 3s;
+    }
+
+    .ambient span:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: #f0f4c3;
+      top: 40%;
+      left: 30%;
+      animation-delay: 6s;
+    }
+
+    @keyframes ambientFloat {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(40px, 40px) scale(1.1);
+      }
     }
 
     /* ─── HERO SECTION ────────────────────────────────── */
@@ -339,20 +388,76 @@
       }
     }
 
-    /* ─── FOOTER ──────────────────────────────────────── */
-    .bottom-strip {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 18px;
-      border-top: 1px solid var(--border-col);
-      font-size: 12px;
-      color: var(--text-muted);
+    /* ─── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 60px 20px 40px;
+        min-height: auto;
+      }
+
+      .hero-h1 {
+        font-size: 42px;
+        letter-spacing: -1px;
+      }
+
+      .hero-sub-h {
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      .hero-desc {
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .scan-ring {
+        width: 400px;
+        height: 400px;
+      }
+
+      @keyframes orbit {
+        from {
+          transform: rotate(0deg) translate(185px) rotate(0deg);
+        }
+
+        to {
+          transform: rotate(360deg) translate(185px) rotate(-360deg);
+        }
+      }
+
+      .cred-strip {
+        margin-top: 40px;
+        gap: 8px;
+      }
+
+      .cred-item {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-h1 {
+        font-size: 34px;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        width: 100%;
+        text-align: center;
+        padding: 12px 20px;
+      }
     }
   </style>
 </head>
 
-<body>
+<body data-auth="required">
 
   <!-- dark-mode decorations -->
   <div class="bg-canvas">
@@ -442,7 +547,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/auth.js"></script>
   <script src="js/lang.js"></script>
-  <script>requireAuth();</script>
+  <script>/* requireAuth is now auto-triggered by data-auth="required" */</script>
 
 </body>
 

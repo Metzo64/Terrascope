@@ -7,7 +7,7 @@
   <title>Select Field – TerraScope</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
   <!-- ⚡ theme MUST run before first paint -->
   <script src="js/theme.js"></script>
   <style>
@@ -74,8 +74,8 @@
     .mode-cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 20px;
     }
 
     .mode-card {
@@ -84,35 +84,40 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      border: 1.5px solid var(--border-col);
-      border-radius: 10px;
-      padding: 10px 4px;
+      border: 2px solid var(--border-col);
+      border-radius: 12px;
+      padding: 12px 4px;
       cursor: pointer;
       background: var(--bg-card);
-      transition: all .18s ease;
+      transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
       text-align: center;
-      min-height: 60px;
+      min-height: 64px;
     }
 
     .mode-card:hover {
       border-color: var(--accent);
       background: var(--bg-card-hover);
+      transform: translateY(-2px);
     }
 
     .mode-card.active {
       border-color: var(--accent);
       background: var(--accent-soft);
-      box-shadow: 0 2px 10px rgba(var(--accent-rgb), .18);
+      box-shadow: 0 4px 12px rgba(var(--accent-rgb), .3);
+      transform: translateY(-2px);
     }
 
     .mode-card .mc-icon {
-      font-size: 18px;
+      font-size: 20px;
+      margin-bottom: 2px;
     }
 
     .mode-card .mc-title {
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .mode-card .mc-sub {
@@ -253,19 +258,36 @@
 
     #continueBtn {
       width: 100%;
-      padding: 15px;
+      padding: 18px;
+      /* More padding to make it prominent */
       border: none;
-      border-radius: 14px;
+      border-radius: 16px;
       cursor: pointer;
-      background: linear-gradient(135deg, #2e7d32, #4caf50, #2e7d32);
-      background-size: 200% 200%;
-      animation: gradShift 3s ease infinite, btnGlow 2.5s ease-in-out infinite;
+      background: linear-gradient(135deg, #1b5e20, #4caf50);
+      animation: gradShift 3s ease infinite, btnHighlight 2s ease-in-out infinite;
       color: #fff;
-      font-size: 15px;
+      font-size: 16px;
+      /* Bigger text */
       font-weight: 900;
-      letter-spacing: .4px;
-      box-shadow: 0 6px 24px rgba(46, 125, 50, .55);
-      transition: all .25s;
+      letter-spacing: 0.5px;
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+      transition: all .3s;
+    }
+
+    @keyframes btnHighlight {
+
+      0%,
+      100% {
+        transform: scale(1);
+        filter: brightness(1);
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+      }
+
+      50% {
+        transform: scale(1.05);
+        filter: brightness(1.2);
+        box-shadow: 0 18px 45px rgba(76, 175, 80, 0.7);
+      }
     }
 
     @keyframes gradShift {
@@ -417,6 +439,7 @@
       html,
       body {
         overflow: auto;
+        height: auto;
       }
 
       .select-shell {
@@ -426,18 +449,29 @@
       }
 
       .sel-sidebar {
-        max-height: 50vh;
+        max-height: 45vh;
         border-right: none;
         border-bottom: 1px solid var(--border-col);
+        padding: 16px;
+      }
+
+      .mode-cards {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on mobile for better fit */
       }
 
       .sel-map-area {
-        height: 55vw;
+        height: 60vh;
         min-height: 320px;
       }
 
-      #map {
-        height: 100% !important;
+      .sidebar-footer {
+        padding: 10px 0;
+      }
+
+      #continueBtn {
+        width: 100%;
+        max-width: none;
       }
     }
 
@@ -448,7 +482,7 @@
   </style>
 </head>
 
-<body>
+<body data-auth="required">
 
   <!-- ─── NAVBAR ──────────────────────────────────────── -->
   <header class="navbar">
@@ -561,7 +595,7 @@
   <script src="js/auth.js"></script>
   <script src="js/lang.js"></script>
   <script src="js/app.js"></script>
-  <script>requireAuth();</script>
+  <script>/* requireAuth is now auto-triggered by data-auth="required" */</script>
 
 </body>
 

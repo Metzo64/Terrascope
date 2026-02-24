@@ -471,10 +471,47 @@
       margin: 24px auto;
       padding: 0 20px 60px;
     }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .dash-wrap {
+        padding: 0 12px 60px;
+        margin: 12px auto;
+      }
+
+      .dash-section {
+        padding: 24px 20px;
+        margin-bottom: 16px;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .explain-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .gauge-wrap svg {
+        width: 160px;
+        height: auto;
+      }
+
+      .verdict-box {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      #cropScoreText,
+      #waterScoreText {
+        font-size: 24px;
+      }
+    }
   </style>
 </head>
 
-<body class="fade-in">
+<body class="fade-in" data-auth="required">
 
   <!-- ─── NAVBAR ─────────────────────────────────────── -->
   <header class="navbar">
@@ -691,38 +728,8 @@
   <script src="js/auth.js"></script>
   <script src="js/lang.js"></script>
   <script src="js/summary.js"></script>
-  <script>
-    // ── Auth guard + populate profile modal ───────────────────
-    (async () => {
-      const user = await requireAuth();
-      if (!user) return;
+  <script>/* Profile and auth logic now handled centrally in auth.js via data-auth attribute */</script>
 
-      const meta = user.user_metadata || {};
-      const name = meta.full_name || user.email?.split('@')[0] || 'Farmer';
-
-      // Initials avatar
-      const initials = name.trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-      document.getElementById('pmAvatar').textContent = initials || '?';
-      document.getElementById('pmName').textContent = name;
-      document.getElementById('pmEmail').textContent = user.email || '—';
-      document.getElementById('pmPhone').textContent = meta.phone_number || '—';
-      document.getElementById('pmDistrict').textContent = meta.district || '—';
-
-      const since = user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '—';
-      document.getElementById('pmSince').textContent = since;
-    })();
-
-    function openProfileModal() {
-      document.getElementById('profileModalOverlay').classList.add('open');
-    }
-    function closeProfileModal(e) {
-      if (!e || e.target === document.getElementById('profileModalOverlay')) {
-        document.getElementById('profileModalOverlay').classList.remove('open');
-      }
-    }
-
-    // theme.js is loaded before body so no extra init needed here
-  </script>
 
 </body>
 
