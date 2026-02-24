@@ -1,211 +1,729 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Field Summary – TerraScope</title>
+  <link rel="stylesheet" href="css/style.css?v=DB2">
+  <!-- ⚡ theme MUST run before first paint -->
+  <script src="js/theme.js"></script>
+  <style>
+    /* ─── PAGE BASE ─────────────────────────────────────────── */
+    body {
+      background: var(--bg-page);
+    }
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="css/style.css?v=FINAL">
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* ─── PROFILE MODAL ──────────────────────────────────────── */
+    .profile-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-modal-overlay.open {
+      display: flex;
+      animation: fadeIn .2s ease;
+    }
+
+    .profile-modal {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-radius: 24px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+      animation: slideUp .25s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .profile-modal-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4A5E28, #6B7F3A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 auto 16px;
+    }
+
+    .profile-modal h2 {
+      text-align: center;
+      margin: 0 0 4px;
+      font-size: 20px;
+      color: #2C3E1A;
+    }
+
+    .profile-modal .pm-email {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      margin: 0 0 24px;
+    }
+
+    .profile-modal-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-col);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .profile-modal-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .profile-modal-row .pm-label {
+      color: #999;
+      font-size: 12px;
+      font-weight: 600;
+      width: 80px;
+    }
+
+    .profile-modal-row .pm-val {
+      font-weight: 600;
+    }
+
+    .pm-close-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-card-2, var(--accent-soft));
+      border: 1px solid var(--border-col);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .pm-close-btn:hover {
+      background: var(--bg-card-hover, var(--accent-soft));
+    }
+
+    /* ─── SVG GAUGE ──────────────────────────────────────────── */
+    .gauge-wrap {
+      text-align: center;
+      margin: 8px 0 4px;
+    }
+
+    .gauge-wrap svg text {
+      font-family: inherit;
+    }
+
+    /* ─── SECTION CARDS ──────────────────────────────────────── */
+    .dash-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 24px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: cardIn .5s ease forwards;
+      transition: border-color .3s;
+    }
+
+    .dash-section:nth-child(1) {
+      animation-delay: .05s;
+    }
+
+    .dash-section:nth-child(2) {
+      animation-delay: .15s;
+    }
+
+    .dash-section:nth-child(3) {
+      animation-delay: .25s;
+    }
+
+    .dash-section:nth-child(4) {
+      animation-delay: .35s;
+    }
+
+    @keyframes cardIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dash-section h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Health-state page tinting */
+    body.health-danger {
+      background: linear-gradient(180deg, #2d0a0a 0%, var(--bg-page) 280px);
+    }
+
+    body.health-warning {
+      background: linear-gradient(180deg, #2d1a00 0%, var(--bg-page) 280px);
+    }
+
+    body.health-danger .dash-section:first-child {
+      border-color: #c62828;
+    }
+
+    body.health-warning .dash-section:first-child {
+      border-color: #e65100;
+    }
+
+    html[data-theme="dark"].health-danger body {
+      background: linear-gradient(180deg, #3b0808 0%, #0d1a07 280px);
+    }
+
+    html[data-theme="dark"] body.health-danger {
+      background: linear-gradient(180deg, #3b0808 0%, #0d1a07 280px) !important;
+    }
+
+    html[data-theme="dark"] body.health-warning {
+      background: linear-gradient(180deg, #3b1f00 0%, #0d1a07 280px) !important;
+    }
+
+    /* ─── OVERALL MINI GRID ──────────────────────────────────── */
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .mini-box {
+      border-radius: 16px;
+      padding: 16px 14px;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-col);
+      text-align: center;
+    }
+
+    .mini-box .mb-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .mini-box .mb-score {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin: 4px 0 0;
+    }
+
+    .mini-box .mb-tag {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .tag-excellent {
+      background: #2e7d32;
+    }
+
+    .tag-good {
+      background: #66bb6a;
+      color: #1a3b1a;
+    }
+
+    .tag-fair {
+      background: #fdd835;
+      color: #5a4200;
+    }
+
+    .tag-warning {
+      background: #fb8c00;
+    }
+
+    .tag-danger {
+      background: #e53935;
+    }
+
+    /* ─── EXPLAIN CARDS ──────────────────────────────────────── */
+    .explain-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    @media(max-width:680px) {
+      .explain-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ex-card {
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .ex-card.good {
+      background: var(--accent-soft);
+      border-left: 4px solid #4caf50;
+    }
+
+    .ex-card.warning {
+      background: var(--bg-card-2);
+      border-left: 4px solid #fbc02d;
+    }
+
+    .ex-card.action {
+      background: var(--bg-card-2);
+      border-left: 4px solid #1976d2;
+    }
+
+    .ex-card h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .ex-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .ex-card li {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    /* ─── VERDICT ────────────────────────────────────────────── */
+    .verdict-box {
+      border-radius: 14px;
+      padding: 14px 18px;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-col);
+      margin: 16px 0 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ─── RISK BOX ───────────────────────────────────────────── */
+    .risk-pill-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .risk-pill {
+      background: var(--accent-soft);
+      border: 1px solid var(--border-col);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* ─── BADGE ──────────────────────────────────────────────── */
+    .status-badge {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: .3px;
+    }
+
+    .badge-excellent {
+      background: #2e7d32;
+    }
+
+    .badge-good {
+      background: #43a047;
+    }
+
+    .badge-fair {
+      background: #f9a825;
+      color: #3e2000;
+    }
+
+    .badge-warning {
+      background: #e65100;
+    }
+
+    .badge-danger {
+      background: #c62828;
+    }
+
+    /* ─── HEATMAP ────────────────────────────────────────────── */
+    .heatmap-wrap {
+      border-radius: 16px;
+      margin-top: 16px;
+      background: transparent;
+      border: 1px solid var(--border-col);
+      max-width: 540px;
+    }
+
+    .heatmap-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      border-radius: 14px;
+    }
+
+    .map-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    /* ─── NDVI COLOR LEGEND ──────────────────────────────────── */
+    .ndvi-legend-bar {
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+      height: 24px;
+    }
+
+    .ndvi-legend-bar span {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, .9);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .6);
+    }
+
+    .ndvi-legend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #888;
+      margin-top: 3px;
+      padding: 0 2px;
+    }
+
+    /* ─── OVERALL DESC ───────────────────────────────────────── */
+    #overallText {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin: 8px 0 0;
+      line-height: 1.6;
+    }
+
+    /* ─── CONTAINER ──────────────────────────────────────────── */
+    .dash-wrap {
+      max-width: 860px;
+      margin: 24px auto;
+      padding: 0 20px 60px;
+    }
+  </style>
 </head>
 
 <body class="fade-in">
 
-<header class="navbar">
-  <div class="logo">
-    <h1>TerraScope</h1>
-    <span>Field Health Summary</span>
+  <!-- ─── NAVBAR ─────────────────────────────────────── -->
+  <header class="navbar">
+    <div class="logo">
+      <h1>TerraScope</h1>
+      <span data-key="summary_title">Field Health Summary</span>
+    </div>
+    <div class="nav-right">
+      <!-- Profile button -->
+      <div class="profile-wrapper" id="profileWrapper">
+        <button id="profileBtn" class="profile-btn" onclick="openProfileModal()">
+          👤 <span id="profileName">Farmer</span>
+        </button>
+        <div id="profileDropdown" class="profile-dropdown hidden">
+          <button id="logoutBtn" class="secondary-btn small full" data-key="logout_btn">Logout</button>
+        </div>
+      </div>
+      <a href="index.html" class="nav-link" style="font-size:13px;" data-key="back_home">← Home</a>
+      <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+      <select id="langSelect">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- ─── PROFILE MODAL ───────────────────────────────── -->
+  <div class="profile-modal-overlay" id="profileModalOverlay" onclick="closeProfileModal(event)">
+    <div class="profile-modal">
+      <div class="profile-modal-avatar" id="pmAvatar">?</div>
+      <h2 id="pmName">—</h2>
+      <p class="pm-email" id="pmEmail">—</p>
+      <div class="profile-modal-row">
+        <span class="pm-label" data-key="profile_phone">Phone</span>
+        <span class="pm-val" id="pmPhone">—</span>
+      </div>
+      <div class="profile-modal-row">
+        <span class="pm-label" data-key="profile_district">District</span>
+        <span class="pm-val" id="pmDistrict">—</span>
+      </div>
+      <div class="profile-modal-row">
+        <span class="pm-label" data-key="profile_member">Member Since</span>
+        <span class="pm-val" id="pmSince">—</span>
+      </div>
+      <button class="pm-close-btn" onclick="closeProfileModal()" data-key="close_btn">Close</button>
+    </div>
   </div>
 
-  <div class="nav-right">
-    <div class="profile-wrapper">
-      <button id="profileBtn" class="profile-btn">
-        👤 <span id="profileName">Farmer</span>
-      </button>
+  <!-- ─── MAIN CONTENT ────────────────────────────────── -->
+  <div class="dash-wrap">
 
-      <div id="profileDropdown" class="profile-dropdown hidden">
-        <p><strong id="pName">—</strong></p>
-        <p id="pEmail">—</p>
-        <p id="pPhone">—</p>
-        <p id="pDistrict">—</p>
-        <hr>
-        <button id="logoutBtn" class="secondary-btn small full">Logout</button>
-      </div>
-    </div>
-
-    <select id="langSelect">
-      <option value="en">English</option>
-      <option value="hi">हिंदी</option>
-      <option value="mr">मराठी</option>
-    </select>
-  </div>
-</header>
-
-<section class="container status-section">
-
-  <!-- =========================
-       OVERALL SUMMARY
-  ========================== -->
-  <section class="summary-page overall-page" id="section-overall">
-
-    <h2 class="summary-heading">🌍 Overall Field Health</h2>
-
-    <div class="overall-status-row">
-      <span id="overallBadge" class="badge large"></span>
-      <span class="overall-label">Overall Status</span>
-    </div>
-
-    <p id="overallText" class="summary-desc"></p>
-
-    <div class="overall-subgrid">
-      <div class="mini-card">
-        <span class="mini-title">🌱 Crop Condition</span>
-        <span id="miniCrop" class="mini-value">—</span>
-      </div>
-
-      <div class="mini-card">
-        <span class="mini-title">💧 Soil Moisture</span>
-        <span id="miniMoisture" class="mini-value">—</span>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- =========================
-       CROP CONDITION
-  ========================== -->
-  <section class="summary-page crop-section" id="section-crop">
-
-    <h2 class="summary-heading">🌱 Crop Condition</h2>
-
-    <div class="status-row">
-      <span id="cropBadge" class="badge large"></span>
-      <span class="overall-label">Vegetation Health</span>
-    </div>
-
-    <div class="visual-grid">
-
-      <!-- HEATMAP -->
-      <div class="map-panel soft-map">
-        <img id="cropMapImage" class="heatmap-img" />
-        <p class="map-caption">Satellite Vegetation Map (NDVI)</p>
-      </div>
-
-      <!-- SCORE -->
-      <div class="score-panel">
-        <div class="score-header">Crop Health Score</div>
-
-        <div class="score-bar">
-          <div id="cropBar" class="score-fill"></div>
+    <!-- 1. OVERALL -->
+    <div class="dash-section">
+      <h2>🌍 <span data-key="overall_status">Overall Field Status</span></h2>
+      <span id="overallBadge" class="status-badge"></span>
+      <p id="overallText"></p>
+      <div class="mini-grid">
+        <div class="mini-box">
+          <div class="mb-label" data-key="crop_condition">Crop Condition</div>
+          <div class="mb-score" id="miniCropScore">—</div>
+          <span class="mb-tag" id="miniCropTag"></span>
         </div>
-
-        <div class="score-label">
-          <strong><span id="cropScore">—</span> / 100</strong>
-        </div>
-
-        <!-- BIG FARMER VERDICT -->
-        <div id="cropVerdict" class="verdict-text">
-          —
+        <div class="mini-box">
+          <div class="mb-label" data-key="moisture_status">Soil Moisture</div>
+          <div class="mb-score" id="miniWaterScore">—</div>
+          <span class="mb-tag" id="miniWaterTag"></span>
         </div>
       </div>
-
     </div>
 
-    <!-- EXPLANATION -->
-    <div class="explain-block">
-      <p id="cropText" class="summary-desc"></p>
+    <!-- 2. CROP -->
+    <div class="dash-section">
+      <h2>🌱 <span data-key="crop_condition">Crop Condition</span></h2>
+      <span id="cropBadge" class="status-badge"></span>
 
-      <div class="explain-grid soft-grid">
-        <div class="explain-card good">
-          <h4>✅ What looks good</h4>
+      <!-- SVG Gauge -->
+      <div class="gauge-wrap">
+        <svg id="cropGauge" viewBox="0 0 220 130" width="200" height="118" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <!-- Background track -->
+          <path d="M 24 112 A 86 86 0 0 1 196 112" stroke="rgba(128,128,128,.15)" stroke-width="20"
+            stroke-linecap="round" />
+          <!-- Red 0–25% -->
+          <path d="M 24 112 A 86 86 0 0 1 49 51" stroke="#e74c3c" stroke-width="20" stroke-linecap="round" />
+          <!-- Orange 25–50% -->
+          <path d="M 49 51 A 86 86 0 0 1 110 26" stroke="#f39c12" stroke-width="20" stroke-linecap="round" />
+          <!-- Yellow 50–75% -->
+          <path d="M 110 26 A 86 86 0 0 1 171 51" stroke="#fdd835" stroke-width="20" stroke-linecap="round" />
+          <!-- Green 75–100% -->
+          <path d="M 171 51 A 86 86 0 0 1 196 112" stroke="#27ae60" stroke-width="20" stroke-linecap="round" />
+          <!-- Needle -->
+          <line id="cropNeedle" x1="110" y1="112" x2="24" y2="112" stroke="#555" stroke-width="3"
+            stroke-linecap="round" />
+          <!-- Center dot -->
+          <circle id="cropDot" cx="110" cy="112" r="7" fill="#555" stroke="white" stroke-width="3" />
+          <!-- Score number -->
+          <text id="cropScoreText" x="110" y="88" text-anchor="middle" font-size="30" font-weight="900"
+            fill="#555">—</text>
+          <!-- SCORE label -->
+          <text x="110" y="104" text-anchor="middle" font-size="9" fill="#999" letter-spacing="1">SCORE</text>
+        </svg>
+      </div>
+
+      <div class="verdict-box" id="cropVerdict"></div>
+
+      <!-- NDVI Map -->
+      <div class="heatmap-wrap" id="cropMapWrap" style="display:none">
+        <img id="cropMapImage" alt="Satellite Vegetation Map" />
+      </div>
+      <!-- NDVI Color Legend -->
+      <div id="ndviLegendWrap" style="display:none;margin-top:8px;">
+        <div class="ndvi-legend-bar">
+          <span style="background:#8b0000">Bare</span>
+          <span style="background:#cc4400">Sparse</span>
+          <span style="background:#e8a020">Low</span>
+          <span style="background:#d4c030">Moderate</span>
+          <span style="background:#90c030">Good</span>
+          <span style="background:#3a8c20">Healthy</span>
+          <span style="background:#1a5010">Dense</span>
+        </div>
+        <div class="ndvi-legend-labels">
+          <span data-key="no_vegetation">No vegetation</span>
+          <span>← Vegetation intensity →</span>
+          <span data-key="dense_crops">Dense crops</span>
+        </div>
+        <p class="map-caption" data-key="ndvi_caption">Satellite Vegetation Map (NDVI)</p>
+      </div>
+
+
+      <p id="cropText" style="font-size:14px;color:#555;margin:14px 0 0;line-height:1.6;"></p>
+
+      <div class="explain-row">
+        <div class="ex-card good">
+          <h4>✅ <span data-key="looks_good">What looks good</span></h4>
           <ul id="cropReasons"></ul>
         </div>
-
-        <div class="explain-card warning">
-          <h4>⚠️ Possible risks</h4>
+        <div class="ex-card warning">
+          <h4>⚠️ <span data-key="possible_risks">Possible risks</span></h4>
           <ul id="cropRisks"></ul>
         </div>
-
-        <div class="explain-card action">
-          <h4>🛠 What you should do</h4>
+        <div class="ex-card action">
+          <h4>🛠 <span data-key="what_to_do">What you should do</span></h4>
           <ul id="cropActions"></ul>
         </div>
       </div>
     </div>
 
-  </section>
+    <!-- 3. WATER / SOIL -->
+    <div class="dash-section">
+      <h2>💧 <span data-key="water_soil">Water &amp; Soil Condition</span></h2>
+      <span id="waterBadge" class="status-badge"></span>
 
-  <!-- =========================
-       WATER & SOIL
-  ========================== -->
-  <section class="summary-page water-section" id="section-water">
-
-    <h2 class="summary-heading">💧 Water & Soil Condition</h2>
-
-    <div class="status-row">
-      <span id="waterBadge" class="badge large"></span>
-      <span class="overall-label">Soil Moisture Status</span>
-    </div>
-
-    <div class="score-panel wide">
-      <div class="score-header">Soil Moisture Score</div>
-
-      <div class="score-bar">
-        <div id="waterBar" class="score-fill"></div>
+      <!-- SVG Gauge -->
+      <div class="gauge-wrap">
+        <svg id="waterGauge" viewBox="0 0 220 130" width="200" height="118" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <!-- Background track -->
+          <path d="M 24 112 A 86 86 0 0 1 196 112" stroke="rgba(128,128,128,.15)" stroke-width="20"
+            stroke-linecap="round" />
+          <!-- Red 0–25% -->
+          <path d="M 24 112 A 86 86 0 0 1 49 51" stroke="#e74c3c" stroke-width="20" stroke-linecap="round" />
+          <!-- Orange 25–50% -->
+          <path d="M 49 51 A 86 86 0 0 1 110 26" stroke="#f39c12" stroke-width="20" stroke-linecap="round" />
+          <!-- Yellow 50–75% -->
+          <path d="M 110 26 A 86 86 0 0 1 171 51" stroke="#fdd835" stroke-width="20" stroke-linecap="round" />
+          <!-- Green 75–100% -->
+          <path d="M 171 51 A 86 86 0 0 1 196 112" stroke="#27ae60" stroke-width="20" stroke-linecap="round" />
+          <!-- Needle -->
+          <line id="waterNeedle" x1="110" y1="112" x2="24" y2="112" stroke="#555" stroke-width="3"
+            stroke-linecap="round" />
+          <!-- Center dot -->
+          <circle id="waterDot" cx="110" cy="112" r="7" fill="#555" stroke="white" stroke-width="3" />
+          <!-- Score number -->
+          <text id="waterScoreText" x="110" y="88" text-anchor="middle" font-size="30" font-weight="900"
+            fill="#555">—</text>
+          <!-- SCORE label -->
+          <text x="110" y="104" text-anchor="middle" font-size="9" fill="#999" letter-spacing="1">SCORE</text>
+        </svg>
       </div>
 
-      <div class="score-label">
-        <strong><span id="waterScore">—</span> / 100</strong>
-      </div>
+      <div class="verdict-box" id="waterVerdict"></div>
 
-      <div id="waterVerdict" class="verdict-text">
-        —
-      </div>
-    </div>
+      <p id="waterText" style="font-size:14px;color:#555;margin:14px 0 0;line-height:1.6;"></p>
 
-    <div class="explain-block">
-      <p id="waterText" class="summary-desc"></p>
-
-      <div class="explain-grid soft-grid">
-        <div class="explain-card good">
-          <h4>✅ Moisture positives</h4>
+      <div class="explain-row">
+        <div class="ex-card good">
+          <h4>✅ <span data-key="moisture_positives">Moisture positives</span></h4>
           <ul id="waterReasons"></ul>
         </div>
-
-        <div class="explain-card warning">
-          <h4>⚠️ Moisture risks</h4>
+        <div class="ex-card warning">
+          <h4>⚠️ <span data-key="moisture_risks">Moisture risks</span></h4>
           <ul id="waterRisks"></ul>
         </div>
-
-        <div class="explain-card action">
-          <h4>🚜 Water advice</h4>
+        <div class="ex-card action">
+          <h4>🚜 <span data-key="water_advice">Water advice</span></h4>
           <ul id="waterActions"></ul>
         </div>
       </div>
     </div>
 
-  </section>
-
-  <!-- =========================
-       FIELD RISKS
-  ========================== -->
-  <section class="summary-page risk-section" id="section-risk">
-
-    <h2 class="summary-heading">⚠️ Field Risks & Alerts</h2>
-
-    <div class="explain-block">
-      <p id="riskText" class="summary-desc"></p>
-
-      <div class="risk-box pastel-yellow">
-        <ul id="riskList"></ul>
-      </div>
+    <!-- 4. RISKS -->
+    <div class="dash-section">
+      <h2>⚠️ <span data-key="risk_title">Field Risks &amp; Alerts</span></h2>
+      <p id="riskText" style="font-size:14px;color:#555;margin:0 0 4px;"></p>
+      <ul class="risk-pill-list" id="riskList"></ul>
     </div>
 
-  </section>
+  </div><!-- /dash-wrap -->
 
-</section>
+  <!-- ─── SCRIPTS ──────────────────────────────────────── -->
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/summary.js"></script>
+  <script>
+    // ── Auth guard + populate profile modal ───────────────────
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
 
-<script src="js/lang.js"></script>
-<script src="js/summary.js"></script>
+      const meta = user.user_metadata || {};
+      const name = meta.full_name || user.email?.split('@')[0] || 'Farmer';
+
+      // Initials avatar
+      const initials = name.trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      document.getElementById('pmAvatar').textContent = initials || '?';
+      document.getElementById('pmName').textContent = name;
+      document.getElementById('pmEmail').textContent = user.email || '—';
+      document.getElementById('pmPhone').textContent = meta.phone_number || '—';
+      document.getElementById('pmDistrict').textContent = meta.district || '—';
+
+      const since = user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '—';
+      document.getElementById('pmSince').textContent = since;
+    })();
+
+    function openProfileModal() {
+      document.getElementById('profileModalOverlay').classList.add('open');
+    }
+    function closeProfileModal(e) {
+      if (!e || e.target === document.getElementById('profileModalOverlay')) {
+        document.getElementById('profileModalOverlay').classList.remove('open');
+      }
+    }
+
+    // theme.js is loaded before body so no extra init needed here
+  </script>
 
 </body>
+
 </html>

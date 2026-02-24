@@ -1,110 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <title>TerraScope</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>TerraScope – Satellite Field Intelligence</title>
+  <meta name="description"
+    content="TerraScope gives farmers satellite-based crop and soil insights. Understand your field before problems become visible." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="css/style.css?v=4" />
+  <!-- ⚡ theme MUST run before first paint -->
+  <script src="js/theme.js"></script>
+  <!-- Landing page always dark radar theme -->
+  <script>document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('ts-theme', 'dark');</script>
+  <style>
+    /* ─── PAGE BASE ─────────────────────────────────── */
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ─── DARK-MODE DECORATIONS (hidden in light) ─────── */
+    .bg-canvas,
+    .bg-grid,
+    .orbit-container {
+      display: none;
+      pointer-events: none;
+    }
+
+    html[data-theme="dark"] .bg-canvas,
+    html[data-theme="dark"] .bg-grid,
+    html[data-theme="dark"] .orbit-container {
+      display: block;
+    }
+
+    /* Animated blobs */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      animation: blobFloat 12s ease-in-out infinite;
+    }
+
+    .bg-blob:nth-child(1) {
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(46, 90, 20, .85), transparent 70%);
+      top: -180px;
+      left: -140px;
+    }
+
+    .bg-blob:nth-child(2) {
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(82, 110, 30, .65), transparent 70%);
+      bottom: 0;
+      right: -120px;
+      animation-delay: 4s;
+    }
+
+    .bg-blob:nth-child(3) {
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(30, 60, 12, .80), transparent 70%);
+      top: 35%;
+      left: 35%;
+      animation-delay: 8s;
+    }
+
+    @keyframes blobFloat {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      33% {
+        transform: translate(30px, -40px) scale(1.05)
+      }
+
+      66% {
+        transform: translate(-20px, 20px) scale(.96)
+      }
+    }
+
+    /* Grid lines — subtly brighter */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(107, 127, 58, .07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(107, 127, 58, .07) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Orbit ring + dot */
+    .orbit-container {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .scan-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 640px;
+      height: 640px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(107, 127, 58, .22);
+      animation: ringPulse 4s ease-in-out infinite;
+    }
+
+    .scan-ring::after {
+      content: '';
+      position: absolute;
+      inset: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(107, 127, 58, .11);
+      animation: ringPulse 4s ease-in-out .5s infinite;
+    }
+
+    @keyframes ringPulse {
+
+      0%,
+      100% {
+        opacity: .55;
+      }
+
+      50% {
+        opacity: 1;
+        box-shadow: 0 0 60px rgba(107, 127, 58, .18);
+      }
+    }
+
+    .orbit-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #a8c260;
+      box-shadow: 0 0 16px #a8c260, 0 0 32px rgba(168, 194, 96, .4);
+      top: 50%;
+      left: 50%;
+      animation: orbit 8s linear infinite;
+    }
+
+    @keyframes orbit {
+      from {
+        transform: rotate(0deg) translate(295px) rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg) translate(295px) rotate(-360deg);
+      }
+    }
+
+    /* ─── LIGHT-MODE AMBIENT GLOW ─────────────────────── */
+    html:not([data-theme="dark"]) .ambient {
+      display: block;
+    }
+
+    html[data-theme="dark"] .ambient {
+      display: none;
+    }
+
+    /* ─── HERO SECTION ────────────────────────────────── */
+    .hero-section {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      min-height: calc(100vh - 56px);
+      justify-content: center;
+    }
+
+    /* chip */
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-soft);
+      border: 1px solid var(--border-col);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 5px 14px;
+      border-radius: 30px;
+      margin-bottom: 24px;
+      animation: fadeUp .5s ease .1s both;
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #66bb6a;
+    }
+
+    /* headline */
+    .hero-h1 {
+      font-size: clamp(36px, 7vw, 68px);
+      font-weight: 900;
+      color: var(--text-primary);
+      letter-spacing: -2px;
+      line-height: 1.08;
+      margin-bottom: 10px;
+      animation: fadeUp .5s ease .22s both;
+    }
+
+    .hero-h1 .green {
+      color: var(--accent);
+    }
+
+    .hero-sub-h {
+      font-size: clamp(16px, 3vw, 22px);
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 18px;
+      animation: fadeUp .5s ease .32s both;
+    }
+
+    .hero-desc {
+      max-width: 500px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      animation: fadeUp .5s ease .42s both;
+    }
+
+    /* CTA buttons */
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp .5s ease .52s both;
+    }
+
+    .cta-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 14px 28px;
+      border-radius: 14px;
+      text-decoration: none;
+      box-shadow: 0 6px 24px rgba(var(--accent-rgb), .4);
+      transition: all .2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(var(--accent-rgb), .5);
+    }
+
+    html[data-theme="dark"] .cta-primary {
+      color: #0d1a07;
+    }
+
+    .cta-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1.5px solid var(--border-col);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .cta-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent);
+    }
+
+    /* credential strip */
+    .cred-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 52px;
+      animation: fadeUp .5s ease .65s both;
+    }
+
+    .cred-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      white-space: nowrap;
+    }
+
+    .cred-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    .bottom-strip {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 18px;
+      border-top: 1px solid var(--border-col);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
 </head>
 
-<body class="fade-in">
+<body>
 
-  <!-- Navigation -->
+  <!-- dark-mode decorations -->
+  <div class="bg-canvas">
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+  </div>
+  <div class="bg-grid"></div>
+  <div class="orbit-container">
+    <div class="scan-ring"></div>
+    <div class="orbit-dot"></div>
+  </div>
+
+  <!-- light-mode ambient -->
+  <div class="ambient"><span></span><span></span><span></span></div>
+
+  <!-- ─── NAVBAR ─────────────────────────────────────── -->
   <header class="navbar">
     <div class="logo">
       <h1>TerraScope</h1>
-      <span data-key="tagline">Field Intelligence Platform</span>
+      <span>Field Intelligence</span>
     </div>
-
     <div class="nav-right">
+      <a href="about.html" class="nav-link" data-key="nav_about">About</a>
 
-      <a href="about.html" data-key="about_link" class="nav-link">About</a>
-
-      <!-- PROFILE -->
-      <div class="profile-wrapper hidden" id="profileWrapper">
-        <button id="profileBtn" class="profile-btn">
+      <!-- Profile pill -->
+      <div class="profile-wrapper hidden" id="profileWrapper" style="position:relative">
+        <button id="profileBtn" class="profile-btn" data-key="profile_btn">
           👤 <span id="profileName">Farmer</span>
         </button>
-
         <div id="profileDropdown" class="profile-dropdown hidden">
           <p><strong id="pName">—</strong></p>
           <p id="pEmail">—</p>
           <p id="pPhone">—</p>
           <p id="pDistrict">—</p>
-
-          <hr>
-
-          <button id="logoutBtn" class="secondary-btn small full">
-            Logout
-          </button>
+          <hr />
+          <button id="logoutBtn" class="primary-btn" style="width:100%;padding:9px;font-size:13px"
+            data-key="logout_btn">Logout</button>
         </div>
       </div>
 
-      <!-- Language selector -->
+      <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+
       <select id="langSelect">
         <option value="en">English</option>
         <option value="hi">हिंदी</option>
         <option value="mr">मराठी</option>
       </select>
-
     </div>
   </header>
 
-  <!-- Hero -->
-  <main class="hero hero-minimal">
+  <!-- ─── HERO ────────────────────────────────────────── -->
+  <section class="hero-section">
+    <div class="hero-chip">
+      <span class="chip-dot"></span>
+      <span data-key="hero_badge">SATELLITE-POWERED · FARMER-FIRST</span>
+    </div>
 
-    <div class="hero-scan"></div>
+    <h1 class="hero-h1">
+      <span data-key="hero_h1a">Know Your</span><br />
+      <span class="green" data-key="hero_h1b">Field's Health</span>
+    </h1>
 
-    <h2 data-key="hero_title_1" class="reveal delay-1">
-      Understand Your Field
-    </h2>
+    <div class="hero-sub-h" data-key="hero_h2">Before Problems Become Visible</div>
 
-    <h2 class="soft reveal delay-2" data-key="hero_title_2">
-      Before Problems Become Visible
-    </h2>
-
-    <p class="hero-sub reveal delay-3" data-key="hero_sub">
-      Satellite-driven field intelligence for crop and soil awareness.
+    <p class="hero-desc" data-key="hero_desc">
+      Satellite-driven crop and soil intelligence for every farmer.
+      Select your field, get analysis in seconds — in your language.
     </p>
 
-    <div class="credibility-row reveal delay-3">
-      <span class="cred-dot"></span>
-      <span class="cred-dot"></span>
-      <span class="cred-dot"></span>
+    <div class="hero-cta">
+      <a href="select.html" class="cta-primary" data-key="cta_primary">Analyze My Field</a>
+      <button class="cta-secondary" onclick="alert('NIR Camera analysis coming soon!')" data-key="cta_nir">NIR Camera
+        Analysis</button>
     </div>
 
-    <div class="hero-actions reveal delay-4">
-
-      <a href="select.html" class="primary-btn large">
-        <span data-key="cta_btn">Select My Field</span>
-      </a>
-
-      <button class="secondary-btn large nir-btn">
-        <span data-key="nir_btn">Use NIR Camera</span>
-        <span class="nir-hint" data-key="nir_hint">
-          Ground-based analysis
-        </span>
-      </button>
-
+    <div class="cred-strip">
+      <span class="cred-item"><span class="cred-dot"></span>Real Sentinel-2 Satellite Data</span>
+      <span class="cred-item"><span class="cred-dot"></span>Free for Every Farmer</span>
+      <span class="cred-item"><span class="cred-dot"></span>EN · हिंदी · मराठी</span>
     </div>
-  </main>
+  </section>
 
-  <div class="ambient">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+  <div class="bottom-strip">© 2025 TerraScope · Satellite-based crop intelligence for Indian farmers</div>
 
-  <footer class="cred-strip">
-    <span data-key="cred_1">Satellite-based analysis</span>
-    <span data-key="cred_2">Field-level focus</span>
-    <span data-key="cred_3">Advisory insights</span>
-  </footer>
-
-  <!-- Scripts -->
-   
+  <!-- ─── SCRIPTS ──────────────────────────────────────── -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
   <script src="js/lang.js"></script>
-  <script src="js/app.js"></script>
+  <script>requireAuth();</script>
 
 </body>
+
 </html>

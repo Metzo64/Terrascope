@@ -1,170 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>TerraScope – Farmer Access</title>
 
-  <link rel="stylesheet" href="css/style.css">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TerraScope – Sign In</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ── Auth page overrides ── */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2C3E1A 0%, #4A5E28 50%, #6B7F3A 100%);
+    }
+
+    .auth-box {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-logo .icon-circle {
+      width: 64px;
+      height: 64px;
+      background: rgba(107, 127, 58, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 28px;
+    }
+
+    .auth-logo h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 800;
+      color: #2C3E1A;
+    }
+
+    .auth-logo p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: #888;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 8px;
+      background: #f4f4f0;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      transition: all 0.2s;
+    }
+
+    .auth-tab.active {
+      background: #fff;
+      color: #2C3E1A;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .auth-form input {
+      padding: 14px 16px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-form input:focus {
+      border-color: #6B7F3A;
+    }
+
+    .auth-form input::placeholder {
+      color: #aaa;
+    }
+
+    .auth-submit {
+      padding: 16px;
+      background: #6B7F3A;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 4px;
+    }
+
+    .auth-submit:hover {
+      background: #5a6e2f;
+    }
+
+    .auth-submit:active {
+      transform: scale(0.98);
+    }
+
+    .auth-submit:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .auth-msg {
+      text-align: center;
+      font-size: 13px;
+      color: #e53935;
+      min-height: 20px;
+      margin-top: -4px;
+    }
+
+    .auth-msg.success {
+      color: #388e3c;
+    }
+
+    .form-hidden {
+      display: none !important;
+    }
+  </style>
 </head>
 
-<body class="fade-in auth-page">
+<body>
 
-  <!-- CENTER SCREEN -->
-  <div class="auth-wrapper" style="
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  ">
+  <div class="auth-box">
 
-    <!-- CARD -->
-    <div class="auth-card reveal" style="
-      width: 420px;
-      padding: 32px;
-      border-radius: 20px;
-    ">
-
-      <h1 class="auth-title"> TerraScope</h1>
-      <p class="auth-subtitle">
-        Smart field intelligence for farmers
-      </p>
-
-      <!-- TOGGLE -->
-      <div class="auth-choice" style="
-        display: flex;
-        gap: 12px;
-        margin-bottom: 20px;
-      ">
-        <button id="newFarmerBtn" class="primary-btn small active" style="flex:1">
-          New Farmer
-        </button>
-        <button id="existingFarmerBtn" class="secondary-btn small" style="flex:1">
-          Existing Farmer
-        </button>
-      </div>
-
-      <!-- NEW FARMER FORM -->
-      <form id="signupForm" class="auth-form">
-
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <input type="text" id="fullName" placeholder="Full Name" required class="mode-select">
-          <input type="email" id="email" placeholder="Email" required class="mode-select">
-          <input type="tel" id="phone" placeholder="Phone Number" class="mode-select">
-
-          <select id="district" class="mode-select" required>
-            <option value="">Select District</option>
-            <option value="Ahmednagar">Ahmednagar</option>
-            <option value="Akola">Akola</option>
-            <option value="Amravati">Amravati</option>
-            <option value="Aurangabad">Aurangabad</option>
-            <option value="Beed">Beed</option>
-            <option value="Bhandara">Bhandara</option>
-            <option value="Buldhana">Buldhana</option>
-            <option value="Chandrapur">Chandrapur</option>
-            <option value="Dhule">Dhule</option>
-            <option value="Gadchiroli">Gadchiroli</option>
-            <option value="Gondia">Gondia</option>
-            <option value="Hingoli">Hingoli</option>
-            <option value="Jalgaon">Jalgaon</option>
-            <option value="Jalna">Jalna</option>
-            <option value="Kolhapur">Kolhapur</option>
-            <option value="Latur">Latur</option>
-            <option value="Mumbai City">Mumbai City</option>
-            <option value="Mumbai Suburban">Mumbai Suburban</option>
-            <option value="Nagpur">Nagpur</option>
-            <option value="Nanded">Nanded</option>
-            <option value="Nandurbar">Nandurbar</option>
-            <option value="Nashik">Nashik</option>
-            <option value="Osmanabad">Osmanabad</option>
-            <option value="Palghar">Palghar</option>
-            <option value="Parbhani">Parbhani</option>
-            <option value="Pune">Pune</option>
-            <option value="Raigad">Raigad</option>
-            <option value="Ratnagiri">Ratnagiri</option>
-            <option value="Sangli">Sangli</option>
-            <option value="Satara">Satara</option>
-            <option value="Sindhudurg">Sindhudurg</option>
-            <option value="Solapur">Solapur</option>
-            <option value="Thane">Thane</option>
-            <option value="Wardha">Wardha</option>
-            <option value="Washim">Washim</option>
-            <option value="Yavatmal">Yavatmal</option>
-          </select>
-
-          <button type="submit" class="primary-btn full">
-            Register & Send Login Link
-          </button>
-        </div>
-
-      </form>
-
-      <!-- EXISTING FARMER -->
-      <form id="loginForm" class="auth-form hidden">
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <input type="email" id="loginEmail" placeholder="Email" required class="mode-select">
-          <button type="submit" class="primary-btn full">
-            Send Login Link
-          </button>
-        </div>
-      </form>
-
-      <p class="auth-note" style="margin-top:16px;text-align:center;">
-        No passwords. Secure email verification only.
-      </p>
-
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="icon-circle">🌿</div>
+      <h1>TerraScope</h1>
+      <p>Smart Farming Intelligence</p>
     </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- ── LOGIN FORM ── -->
+    <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+      <input type="email" id="loginEmail" placeholder="Email address" required />
+      <input type="password" id="loginPassword" placeholder="Password (min 6 chars)" required />
+      <p class="auth-msg" id="loginMsg"></p>
+      <button type="submit" class="auth-submit" id="loginBtn">Sign In</button>
+    </form>
+
+    <!-- ── SIGNUP FORM ── -->
+    <form class="auth-form form-hidden" id="signupForm" onsubmit="handleSignup(event)">
+      <input type="text" id="signupName" placeholder="Full Name" required />
+      <input type="email" id="signupEmail" placeholder="Email address" required />
+      <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required />
+      <input type="tel" id="signupPhone" placeholder="Phone Number" />
+      <input type="text" id="signupDistrict" placeholder="District" required />
+      <p class="auth-msg" id="signupMsg"></p>
+      <button type="submit" class="auth-submit" id="signupBtn">Create Account</button>
+    </form>
+
   </div>
 
-  <!-- SCRIPT -->
   <script>
-    const supabaseClient = supabase.createClient(
-      "https://jmdmrwmnyfnghhqggzlw.supabase.co",
-      "sb_publishable_y3BIYo-V5pISoYNd7kQAqA_OSif7Nnk"
-    );
+    const SUPABASE_URL = "https://sifzjfzzkdzjvnjgzjwi.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_MP_CAHgmdUbZypV-Cuz8KA_asbic9Je";
+    const _db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const newBtn = document.getElementById("newFarmerBtn");
-    const oldBtn = document.getElementById("existingFarmerBtn");
-    const signupForm = document.getElementById("signupForm");
-    const loginForm = document.getElementById("loginForm");
+    // ── Redirect if already logged in ──────────────────────────
+    (async () => {
+      const { data } = await _db.auth.getSession();
+      if (data.session) window.location.href = "index.html";
+    })();
 
-    newBtn.onclick = () => {
-      signupForm.classList.remove("hidden");
-      loginForm.classList.add("hidden");
-      newBtn.classList.add("active");
-      oldBtn.classList.remove("active");
-    };
+    // ── Tab switcher ───────────────────────────────────────────
+    function switchTab(tab) {
+      const isLogin = tab === "login";
+      document.getElementById("loginForm").classList.toggle("form-hidden", !isLogin);
+      document.getElementById("signupForm").classList.toggle("form-hidden", isLogin);
+      document.getElementById("tabLogin").classList.toggle("active", isLogin);
+      document.getElementById("tabSignup").classList.toggle("active", !isLogin);
+    }
 
-    oldBtn.onclick = () => {
-      signupForm.classList.add("hidden");
-      loginForm.classList.remove("hidden");
-      oldBtn.classList.add("active");
-      newBtn.classList.remove("active");
-    };
-
-    signupForm.onsubmit = async (e) => {
+    // ── LOGIN ──────────────────────────────────────────────────
+    async function handleLogin(e) {
       e.preventDefault();
-      const { error } = await supabaseClient.auth.signInWithOtp({
-        email: email.value,
-        options: {
-          data: {
-            full_name: fullName.value,
-            district: district.value,
-            phone_number: phone.value
-          }
-        }
-      });
-      alert(error ? error.message : "Check your email for the login link!");
-    };
+      const btn = document.getElementById("loginBtn");
+      const msg = document.getElementById("loginMsg");
+      btn.disabled = true;
+      btn.textContent = "Signing in…";
+      msg.textContent = "";
+      msg.className = "auth-msg";
 
-    loginForm.onsubmit = async (e) => {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      const { error } = await _db.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        msg.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+      } else {
+        window.location.href = "index.html";
+      }
+    }
+
+    // ── SIGNUP ─────────────────────────────────────────────────
+    async function handleSignup(e) {
       e.preventDefault();
-      const { error } = await supabaseClient.auth.signInWithOtp({
-        email: loginEmail.value
+      const btn = document.getElementById("signupBtn");
+      const msg = document.getElementById("signupMsg");
+      btn.disabled = true;
+      btn.textContent = "Creating account…";
+      msg.textContent = "";
+      msg.className = "auth-msg";
+
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value;
+      const phone = document.getElementById("signupPhone").value.trim();
+      const district = document.getElementById("signupDistrict").value.trim();
+
+      if (password.length < 6) {
+        msg.textContent = "Password must be at least 6 characters.";
+        btn.disabled = false;
+        btn.textContent = "Create Account";
+        return;
+      }
+
+      const { data, error } = await _db.auth.signUp({
+        email, password,
+        options: { data: { full_name: name, phone_number: phone, district } }
       });
-      alert(error ? error.message : "Check your email to log in!");
-    };
+
+      if (error) {
+        msg.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = "Create Account";
+        return;
+      }
+
+      // Best-effort profile save to DB
+      if (data.user) {
+        try {
+          await _db.from("profiles").upsert({
+            id: data.user.id, full_name: name,
+            email, phone_number: phone, district,
+            created_at: new Date().toISOString()
+          });
+        } catch (_) { /* silent — user still registered */ }
+      }
+
+      if (data.session) {
+        // Email confirm OFF → logged in immediately
+        window.location.href = "index.html";
+      } else {
+        msg.className = "auth-msg success";
+        msg.textContent = "✅ Account created! Check your email to verify, then sign in.";
+        btn.disabled = false;
+        btn.textContent = "Create Account";
+        switchTab("login");
+      }
+    }
   </script>
 
 </body>
+
 </html>

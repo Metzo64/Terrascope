@@ -1,143 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Select Field – TerraScope</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+  <link rel="stylesheet" href="css/style.css?v=4" />
+  <!-- ⚡ theme MUST run before first paint -->
+  <script src="js/theme.js"></script>
+  <style>
+    /* ── ONE-SCREEN LAYOUT ────────────────────────────── */
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
-  <link rel="stylesheet" href="css/style.css">
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+    }
+
+    /* full-viewport split under navbar */
+    .select-shell {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+    }
+
+    /* ── LEFT SIDEBAR ─────────────────────────────────── */
+    .sel-sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      /* fill full grid cell height */
+      overflow: hidden;
+      border-right: 1px solid var(--border-col);
+      background: var(--bg-card);
+    }
+
+    .sidebar-body {
+      padding: 16px;
+      flex: 1;
+      min-height: 0;
+      /* ← critical: allows flex child to scroll */
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+    }
+
+    .sidebar-body::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar-body::-webkit-scrollbar-thumb {
+      background: var(--border-col);
+      border-radius: 4px;
+    }
+
+    .sel-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* ── MODE CARDS (compact horizontal 3-col tabs) ─────── */
+    .mode-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .mode-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1.5px solid var(--border-col);
+      border-radius: 10px;
+      padding: 10px 4px;
+      cursor: pointer;
+      background: var(--bg-card);
+      transition: all .18s ease;
+      text-align: center;
+      min-height: 60px;
+    }
+
+    .mode-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    .mode-card.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 2px 10px rgba(var(--accent-rgb), .18);
+    }
+
+    .mode-card .mc-icon {
+      font-size: 18px;
+    }
+
+    .mode-card .mc-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .mode-card .mc-sub {
+      display: none;
+    }
+
+    .mode-card .mc-badge {
+      display: none;
+    }
+
+    /* ── SATBARA BOX ──────────────────────────────────── */
+    #satbaraBox {
+      background: var(--bg-card-2);
+      border: 1.5px solid var(--border-col);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    #satbaraBox input {
+      width: 100%;
+      margin: 6px 0 10px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border-col);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    #satbaraBox input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    #satbaraBox label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    #locateVillageBtn {
+      width: 100%;
+      padding: 9px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      transition: opacity .2s;
+    }
+
+    #locateVillageBtn:hover {
+      opacity: .85;
+    }
+
+    /* ── CROP CHIPS ───────────────────────────────────── */
+    .crop-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .crop-chip {
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1.5px solid var(--border-col);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      transition: all .15s;
+    }
+
+    .crop-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .crop-chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ── LOCATION ROW ─────────────────────────────────── */
+    .loc-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    #useLocationBtn {
+      flex: 1;
+      padding: 8px;
+      border: 1.5px solid var(--border-col);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    #useLocationBtn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── COORDS STATUS ────────────────────────────────── */
+    #coords {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-card-2);
+      border: 1px solid var(--border-col);
+      border-radius: 8px;
+      padding: 7px 10px;
+      margin-bottom: 12px;
+      min-height: 32px;
+      word-break: break-all;
+    }
+
+    /* ── SIDEBAR FOOTER ───────────────────────────────── */
+    .sidebar-footer {
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--border-col);
+      background: var(--bg-card);
+      flex-shrink: 0;
+      /* ← never scrolls away, always visible */
+    }
+
+    #continueBtn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2e7d32, #4caf50, #2e7d32);
+      background-size: 200% 200%;
+      animation: gradShift 3s ease infinite, btnGlow 2.5s ease-in-out infinite;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: .4px;
+      box-shadow: 0 6px 24px rgba(46, 125, 50, .55);
+      transition: all .25s;
+    }
+
+    @keyframes gradShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    @keyframes btnGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 6px 24px rgba(46, 125, 50, .5), 0 0 0 0 rgba(46, 125, 50, .3);
+      }
+
+      50% {
+        box-shadow: 0 6px 24px rgba(46, 125, 50, .5), 0 0 0 10px rgba(46, 125, 50, 0);
+      }
+    }
+
+    #continueBtn:hover:not(.disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(46, 125, 50, .7);
+    }
+
+    #continueBtn.disabled {
+      opacity: .38;
+      cursor: not-allowed;
+      pointer-events: none;
+      animation: none;
+    }
+
+    /* ─── BACKEND LOADING OVERLAY ────────────────────── */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(8, 18, 4, .92);
+      backdrop-filter: blur(8px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #loadingOverlay.visible {
+      display: flex;
+    }
+
+    .lo-card {
+      background: rgba(107, 127, 58, .12);
+      border: 1.5px solid rgba(107, 127, 58, .3);
+      border-radius: 28px;
+      padding: 40px 48px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .lo-sat {
+      font-size: 52px;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: satFloat 2.4s ease-in-out infinite;
+    }
+
+    @keyframes satFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-5deg)
+      }
+
+      50% {
+        transform: translateY(-10px) rotate(5deg)
+      }
+    }
+
+    .lo-spin {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 4px solid rgba(168, 194, 96, .2);
+      border-top-color: #a8c260;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .lo-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #e8eeda;
+      margin-bottom: 10px;
+    }
+
+    .lo-msg {
+      font-size: 14px;
+      color: rgba(232, 238, 218, .62);
+      min-height: 20px;
+      transition: opacity .4s;
+    }
+
+    .lo-warm {
+      font-size: 12px;
+      color: #f5a623;
+      margin-top: 18px;
+      padding: 8px 14px;
+      background: rgba(245, 166, 35, .1);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .lo-warm.show {
+      display: block;
+    }
+
+    /* ── MAP AREA ─────────────────────────────────────── */
+    .sel-map-area {
+      position: relative;
+    }
+
+    #map {
+      width: 100%;
+      height: 100% !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    .map-disabled {
+      pointer-events: none;
+      opacity: .45;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 700px) {
+
+      html,
+      body {
+        overflow: auto;
+      }
+
+      .select-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        height: auto;
+      }
+
+      .sel-sidebar {
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-col);
+      }
+
+      .sel-map-area {
+        height: 55vw;
+        min-height: 320px;
+      }
+
+      #map {
+        height: 100% !important;
+      }
+    }
+
+    /* dark-mode bg dot for map overlay */
+    html[data-theme="dark"] .sel-map-area::after {
+      content: none;
+    }
+  </style>
 </head>
 
-<body class="fade-in">
+<body>
 
-<header class="navbar">
-  <div class="logo">
-    <h1>TerraScope</h1>
-    <span data-key="select_tagline">Select Field Location</span>
-  </div>
-</header>
-
-<section class="container">
-
-  <p class="step-label">
-    Step 1 of 2 — Select your field
-  </p>
-
-  <h2>Select Your Field Location</h2>
-
-  <p class="subtitle">
-    Choose how you want to identify your farmland.
-  </p>
-
-  <!-- ===============================
-       LOCATION + METHOD + CROP
-  ================================ -->
-  <div class="selection-controls">
-
-    <!-- Use current location -->
-    <button id="locateBtn" class="secondary-btn">
-      Use My Current Location
-    </button>
-
-    <!-- Field selection method -->
-    <div class="method-wrapper">
-      <label class="field-label">
-        Field Selection Method
-      </label>
-
-      <select id="selectionMode" class="mode-select">
-        <option value="point">Point (Quick)</option>
-        <option value="polygon">Boundary (Accurate)</option>
-        <option value="record">7/12 Land Record (Recommended)</option>
+  <!-- ─── NAVBAR ──────────────────────────────────────── -->
+  <header class="navbar">
+    <div class="logo">
+      <h1>TerraScope</h1>
+      <span data-key="step_1">STEP 1 OF 2 — SELECT YOUR FIELD</span>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="nav-link" data-key="back_home">← Home</a>
+      <button id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+      <select id="langSelect">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+        <option value="mr">मराठी</option>
       </select>
     </div>
+  </header>
 
-    <!-- Crop selection -->
-    <div class="method-wrapper">
-      <label class="field-label">
-        Crop Grown on This Field
-      </label>
+  <!-- ─── ONE-SCREEN SHELL ─────────────────────────────── -->
+  <div class="select-shell">
 
-      <select id="cropSelect" class="mode-select">
-        <option value="general">General / Mixed Crops</option>
-        <option value="rice">Rice</option>
-        <option value="wheat">Wheat</option>
-        <option value="cotton">Cotton</option>
-      </select>
+    <!-- LEFT: SIDEBAR -->
+    <aside class="sel-sidebar">
+      <div class="sidebar-body">
+
+        <!-- Selection Method -->
+        <div class="sel-label" data-key="selection_method">Field Selection Method</div>
+        <div class="mode-cards">
+          <div class="mode-card active" data-mode="point" onclick="setMode('point')">
+            <span class="mc-icon">📍</span>
+            <div>
+              <div class="mc-title" data-key="mode_point">Point (Quick)</div>
+              <div class="mc-sub">Tap any spot on your field</div>
+            </div>
+          </div>
+          <div class="mode-card" data-mode="polygon" onclick="setMode('polygon')">
+            <span class="mc-icon">🗺️</span>
+            <div>
+              <div class="mc-title" data-key="mode_polygon">Boundary (Accurate)</div>
+              <div class="mc-sub">Draw your field outline</div>
+            </div>
+          </div>
+          <div class="mode-card" data-mode="satbara" onclick="setMode('satbara')">
+            <span class="mc-icon">📋</span>
+            <div>
+              <div class="mc-title" data-key="mode_satbara">Satbara / 7-12</div>
+              <div class="mc-sub">Enter survey number</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Satbara Inputs -->
+        <div id="satbaraBox" style="display:none">
+          <label data-key="village_name">Village Name</label>
+          <input id="villageName" type="text" placeholder="e.g. Nashik" />
+          <label data-key="survey_number">Survey Number</label>
+          <input id="surveyNumber" type="text" placeholder="e.g. 42/1" />
+          <button id="locateVillageBtn" data-key="locate_village_btn">Locate Village on Map</button>
+        </div>
+
+        <!-- Crop Selection -->
+        <div class="sel-label" style="margin-top:12px" data-key="crop_label">Crop Grown</div>
+        <div class="crop-chips">
+          <div class="crop-chip active" data-crop="general" onclick="setCrop(this)" data-key="crop_general">General
+          </div>
+          <div class="crop-chip" data-crop="rice" onclick="setCrop(this)" data-key="crop_rice">Rice</div>
+          <div class="crop-chip" data-crop="wheat" onclick="setCrop(this)" data-key="crop_wheat">Wheat</div>
+          <div class="crop-chip" data-crop="cotton" onclick="setCrop(this)" data-key="crop_cotton">Cotton</div>
+          <div class="crop-chip" data-crop="sugarcane" onclick="setCrop(this)" data-key="crop_sugarcane">Sugarcane</div>
+          <div class="crop-chip" data-crop="soybean" onclick="setCrop(this)" data-key="crop_soybean">Soybean</div>
+        </div>
+
+        <!-- Use Location -->
+        <div class="loc-row">
+          <button id="useLocationBtn" data-key="use_location">📡 Use My Location</button>
+        </div>
+
+        <!-- Coords display -->
+        <div id="coords" data-key="no_location">No location selected</div>
+
+      </div><!-- /sidebar-body -->
+
+      <!-- Sticky footer CTA -->
+      <div class="sidebar-footer">
+        <button id="continueBtn" class="disabled" data-key="analyze_btn">Analyze Field →</button>
+      </div>
+    </aside>
+
+    <!-- RIGHT: MAP -->
+    <div class="sel-map-area">
+      <div id="map"></div>
     </div>
 
+  </div><!-- /select-shell -->
+
+  <!-- ─── BACKEND LOADING OVERLAY ────────────────────── -->
+  <div id="loadingOverlay">
+    <div class="lo-card">
+      <div class="lo-sat">🛰️</div>
+      <div class="lo-title" data-key="lo_title">Analyzing Your Field</div>
+      <div class="lo-msg" id="loMsg">Contacting satellites…</div>
+      <div class="lo-warm" id="loWarm">First start may take ~60 seconds. Our backend is warming up!</div>
+    </div>
   </div>
 
-  <!-- ===============================
-       MAP
-  ================================ -->
-  <div id="map"></div>
-
-  <!-- ===============================
-       7/12 UPLOAD
-  ================================ -->
-  <div id="recordBox" class="record-box" style="display:none;">
-
-    <p class="subtitle">
-      Upload your 7/12 land record to auto-read survey details.
-    </p>
-
-    <label class="field-label">Upload 7/12 Document</label>
-    <input type="file" id="satbaraFile" accept=".pdf,.jpg,.png">
-
-    <label class="field-label">Village Name</label>
-    <input type="text" id="villageInput" placeholder="Eg. Panvel">
-
-    <label class="field-label">Survey Number</label>
-    <input type="text" id="surveyInput" placeholder="Eg. 45/2A">
-
-  </div>
-
-  <!-- ===============================
-       ACTION BAR
-  ================================ -->
-  <div class="action-bar">
-    <span id="coords">
-      No location selected
-    </span>
-
-    <a id="continueBtn"
-       class="primary-btn disabled"
-       href="dashboard.html">
-      Analyze Field
-    </a>
-  </div>
-
-</section>
-
-<!-- ===============================
-     SCRIPTS
-================================ -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-
-<script src="js/lang.js"></script>
-<script src="js/app.js"></script>
-
-<!-- Toggle map vs 7/12 -->
-<script>
-  const modeSelect = document.getElementById("selectionMode");
-  const recordBox = document.getElementById("recordBox");
-  const mapBox = document.getElementById("map");
-
-  modeSelect.addEventListener("change", () => {
-    if (modeSelect.value === "record") {
-      recordBox.style.display = "block";
-      mapBox.classList.add("map-disabled");
-    } else {
-      recordBox.style.display = "none";
-      mapBox.classList.remove("map-disabled");
-    }
-  });
-</script>
+  <!-- ─── SCRIPTS ────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/app.js"></script>
+  <script>requireAuth();</script>
 
 </body>
+
 </html>
