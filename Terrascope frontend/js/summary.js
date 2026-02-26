@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
   else if (cropLevel === "good" || waterLevel === "good") overallLevel = "good";
 
   /* ── Color-tint the page based on overall health ──── */
+  document.body.className = ""; // clear
   const healthClass = (overallLevel === "danger" || overallLevel === "warning")
     ? `health-${overallLevel}`
     : "health-good";

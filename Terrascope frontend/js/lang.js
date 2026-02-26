@@ -101,7 +101,10 @@ const translations = {
     selection_method: "Field Selection Method",
     mode_point: "Point (Quick)",
     mode_polygon: "Boundary (Accurate)",
-    mode_satbara: "Satbara / 7-12",
+    mode_satbara: "Village Details",
+    village_name: "Village Name",
+    survey_number: "Plot / Survey Number",
+    locate_village_btn: "Locate Plot on Map",
     recommended_badge: "Recommended",
     crop_label: "Crop Grown on This Field",
     crop_general: "General / Mixed",
@@ -109,7 +112,9 @@ const translations = {
     crop_cotton: "Cotton", crop_sugarcane: "Sugarcane", crop_soybean: "Soybean",
     satbara_title: "Satbara / 7-12 Land Record",
     satbara_info: "Enter your village name and survey number. We'll locate your village — then draw your field boundary.",
-    locate_village_btn: "Locate Village on Map",
+    locate_village_btn: "Locate Plot on Map",
+    village_name: "Village Name",
+    survey_number: "Plot / Survey Number",
     use_location: "Use My Location",
     no_location: "No location selected",
     analyze_btn: "Analyze Field →",
@@ -128,6 +133,82 @@ const translations = {
     feat4_title: "Satbara / 7-12 Mode", feat4_desc: "Enter your village and survey number to instantly locate your plot.",
     feat5_title: "3 Languages", feat5_desc: "All results in English, Hindi, or Marathi — choose what suits you.",
     feat6_title: "Results in Seconds", feat6_desc: "Point, click, analyze — full satellite field report in under a minute.",
+
+    /* ---------- NIR UPLOAD PAGE ---------- */
+    nir_upload_title: "Ground NIR Scan",
+    nir_upload_sub: "Analyze individual leaves for micro-level health.",
+    nir_how_title: "How to capture NIR photo?",
+    nir_step_1: "Use NIR Lens",
+    nir_step_2: "Even Light",
+    nir_step_3: "Clear Focus",
+    nir_prompt: "Tap to upload NIR camera photo",
+    nir_analyze_btn: "Analyze Leaf Health →",
+    nir_processing: "AI is analyzing cellular health...",
+    nir_wait: "This usually takes 2-3 seconds",
+
+    /* ---------- NIR SUMMARY PAGE UPGRADE ---------- */
+    ground_leaf_analysis: "Ground Level NIR Analysis",
+    analyzed_specimen: "Analyzed Specimen",
+    early_stress_detection: "Early stress detection before visible symptoms.",
+    stress_score_label: "STRESS SCORE",
+    actionable_insights: "Actionable Insights",
+    stress_detection_range: "STRESS DETECTION RANGE",
+    geo_tagged: "GEO-TAGGED",
+
+    status_healthy: "Healthy",
+    status_moderate: "Moderate",
+    status_critical: "Critical",
+    status_severe: "Severe",
+
+    priority_low: "LOW",
+    priority_normal: "NORMAL",
+    priority_medium: "MEDIUM",
+    priority_high: "HIGH",
+    priority_urgent: "URGENT",
+
+    plan_maintain_routine: "Maintain Routine",
+    desc_maintain_routine: "Your specimen shows no significant stress. Continue your standard irrigation and fertilization schedule.",
+    plan_next_inspection: "Next Inspection",
+    desc_next_inspection: "Plan your next NIR ground check in 7 days to ensure continued stability.",
+
+    plan_optimize_irrigation: "Optimize Irrigation",
+    desc_optimize_irrigation: "Early moisture stress detected. Ensure the root zone is receiving adequate water. Check for soil compaction.",
+    plan_nutrient_boost: "Nutrient Boost",
+    desc_nutrient_boost: "Consider a mild foliar spray with trace minerals to help the plant recover from early stress.",
+    plan_monitor_daily: "Monitor Daily",
+    desc_monitor_daily: "Watch for spreading symptoms. Re-scan this zone in 48 hours to track progress.",
+
+    plan_emergency_watering: "Emergency Watering",
+    desc_emergency_watering: "Severe stress detected. Initiate deep irrigation immediately to prevent permanent tissue damage.",
+    plan_disease_inspection: "Disease Inspection",
+    desc_disease_inspection: "High stress often correlates with disease susceptibility. Inspect stem and lower leaves for pests or fungus.",
+    plan_expert_intervention: "Expert Intervention",
+    desc_expert_intervention: "The stress level is critical. We recommend reaching out to an agricultural specialist immediately.",
+
+    analysis_failed: "Analysis failed. Please ensure the specimen is clearly visible.",
+    error_invalid_specimen: "The image does not look like a valid plant specimen. Please focus on a leaf.",
+
+    /* ---------- NIR SUMMARY PAGE ---------- */
+    // leaf_health_index: "Leaf Health Index", // Moved/replaced
+    // analyzed_specimen: "Analyzed Specimen", // Moved/replaced
+    ground_capture: "High-resolution NIR ground capture",
+    how_it_works_title: "How Ground NIR Works",
+    how_it_works_desc: "Our model analyzes reflected light patterns in the Near-Infrared spectrum. Cellular stress shows up in these patterns before any visible yellowing occurs.",
+    biologic_header: "Expert Recommendation",
+    new_scan_btn: "← New Scan",
+
+    /* ---------- ABOUT PAGE ---------- */
+    about_hero_badge: "EMPOWERING INDIAN FARMERS",
+    about_hero_h1: "Intelligence for Every Acre",
+    about_desc: "TerraScope combines world-class satellite imagery with on-ground NIR imaging to provide farmers with a 360-degree view of their field's health.",
+    about_macro_title: "Macro Intelligence",
+    about_macro_desc: "Using Sentinel-2 satellite constellations, we monitor your fields from space to detect moisture stress across entire villages.",
+    about_micro_title: "Micro Intelligence",
+    about_micro_desc: "Our Ground NIR technology processes smartphone photos of individual leaves to detect stress symptoms invisible to the human eye.",
+    about_mission_title: "Our Mission",
+    about_mission_desc: "We believe data-driven farming should be free and accessible to help reduce fertilizer waste and increase yields.",
+    about_cta_title: "Ready to start?",
+    about_cta_btn: "Analyze My Field",
 
     /* ---------- NDVI LEGEND ---------- */
     no_vegetation: "No vegetation", dense_crops: "Dense crops"
@@ -220,13 +301,19 @@ const translations = {
     select_sub: "अपनी भूमि रेखांकन का तरीका चुनें, फिर उगाई चुनें।",
     selection_method: "खेत चयन विधि",
     mode_point: "बिंदु (त्वरित)", mode_polygon: "सीमा (सटीक)",
-    mode_satbara: "सात बारा / 7-12", recommended_badge: "अनुशंसित",
+    mode_satbara: "गांव का विवरण",
+    village_name: "गांव का नाम",
+    survey_number: "खेत / सर्वे नंबर",
+    locate_village_btn: "नक्शे पर खेत ढूंढें",
+    recommended_badge: "अनुशंसित",
     crop_label: "इस खेत में उगाई गयी फसल",
     crop_general: "सामान्य", crop_rice: "धान", crop_wheat: "गेहूँ",
     crop_cotton: "कपास", crop_sugarcane: "गन्ना", crop_soybean: "सोयाबीन",
     satbara_title: "सात-बारा / 7-12 भूमि अभिलेख",
     satbara_info: "गांव का नाम और सर्वेक्षण नंबर दर्ज करें। हम नक्शे पर गांव ढूंढेंगे।",
-    locate_village_btn: "नक्शे पर गांव ढूंढें",
+    // locate_village_btn: "नक्शे पर खेत ढूंढें", // Duplicate key, removed.
+    // village_name: "गांव का नाम", // Duplicate key, removed.
+    // survey_number: "खेत / सर्वे नंबर", // Duplicate key, removed.
     use_location: "मेरी स्थिति उपयोग करें",
     no_location: "कोई स्थन नहीं चुना",
     analyze_btn: "खेत विश्लेषण करें →",
@@ -240,7 +327,86 @@ const translations = {
     stat_ndmi: "मिट्टी नमी", stat_lang: "भाषाएं",
     feat1_title: "वास्तविक उपग्रह डेटा", feat1_desc: "फ़ील्ड स्तर पर Sentinel-2 चित्रण।",
     feat2_title: "फसल तनाव पहचान", feat3_title: "मिट्टी नमी जानकारी",
-    feat4_title: "सात-बारा विधा", feat5_title: "3 भाषाएं", feat6_title: "सेकंडों में परिणाम",
+    feat4_title: "सात-बारा विधा", feat5_title: "3 भाषाएं", feat5_desc: "सभी परिणाम अंग्रेजी, हिंदी या मराठी में — जो आपको सूट करे वह चुनें।",
+    feat6_title: "सेकंडों में परिणाम", feat6_desc: "पॉइंट करें, क्लिक करें, विश्लेषण करें — एक मिनट से भी कम समय में पूरी सैटेलाइट फील्ड रिपोर्ट।",
+
+    /* ---------- NIR UPLOAD PAGE ---------- */
+    nir_upload_title: "ग्राउंड एनआईआर स्कैन",
+    nir_upload_sub: "सूक्ष्म स्तर के स्वास्थ्य के लिए व्यक्तिगत पत्तियों का विश्लेषण करें।",
+    nir_how_title: "एनआईआर फोटो कैसे लें?",
+    nir_step_1: "एनआईआर लेंस उपयोग करें",
+    nir_step_2: "समान प्रकाश",
+    nir_step_3: "स्पष्ट फोकस",
+    nir_prompt: "एनआईआर कैमरा फोटो अपलोड करने के लिए टैप करें",
+    nir_analyze_btn: "पत्ती स्वास्थ्य विश्लेषण →",
+    nir_processing: "AI सेलुलर स्वास्थ्य का विश्लेषण कर रहा है...",
+    nir_wait: "इसमें आमतौर पर 2-3 सेकंड लगते हैं",
+
+    /* ---------- NIR SUMMARY PAGE UPGRADE ---------- */
+    ground_leaf_analysis: "ग्राउंड लेव्हल एनआयआर विश्लेषण",
+    analyzed_specimen: "विश्लेषण किया गया नमूना",
+    early_stress_detection: "दृश्यमान लक्षणों से पहले जल्दी तनाव का पता लगाना।",
+    stress_score_label: "तनाव स्कोर",
+    actionable_insights: "कार्यवाही योग्य अंतर्दृष्टि",
+    stress_detection_range: "तनाव का पता लगाने की सीमा",
+    geo_tagged: "जियो-टैग किया गया",
+
+    status_healthy: "स्वस्थ",
+    status_moderate: "मध्यम",
+    status_critical: "गंभीर",
+    status_severe: "अत्यधिक गंभीर",
+
+    priority_low: "कम",
+    priority_normal: "सामान्य",
+    priority_medium: "मध्यम",
+    priority_high: "उच्च",
+    priority_urgent: "अति आवश्यक",
+
+    plan_maintain_routine: "दिनचर्या बनाए रखें",
+    desc_maintain_routine: "आपका नमूना कोई महत्वपूर्ण तनाव नहीं दिखाता है। अपनी मानक सिंचाई और उर्वरीकरण अनुसूची जारी रखें।",
+    plan_next_inspection: "अगला निरीक्षण",
+    desc_next_inspection: "निरंतर स्थिरता सुनिश्चित करने के लिए 7 दिनों में अपने अगले एनआईआर ग्राउंड चेक की योजना बनाएं।",
+
+    plan_optimize_irrigation: "सिंचाई अनुकूलित करें",
+    desc_optimize_irrigation: "प्रारंभिक नमी तनाव का पता चला। सुनिश्चित करें कि जड़ क्षेत्र को पर्याप्त पानी मिल रहा है। मिट्टी के जमाव की जाँच करें।",
+    plan_nutrient_boost: "पोषक तत्वों को बढ़ावा",
+    desc_nutrient_boost: "पौधे को प्रारंभिक तनाव से उबरने में मदद करने के लिए सूक्ष्म खनिजों के साथ हल्के पत्तेदार स्प्रे पर विचार करें।",
+    plan_monitor_daily: "दैनिक निगरानी",
+    desc_monitor_daily: "फैलने वाले लक्षणों पर नज़र रखें। प्रगति को ट्रैक करने के लिए 48 घंटों में इस क्षेत्र को फिर से स्कैन करें।",
+
+    plan_emergency_watering: "आपातकालीन सिंचाई",
+    desc_emergency_watering: "गंभीर तनाव का पता चला। स्थायी ऊतक क्षति को रोकने के लिए तुरंत गहरी सिंचाई शुरू करें।",
+    plan_disease_inspection: "रोग निरीक्षण",
+    desc_disease_inspection: "उच्च तनाव अक्सर रोग संवेदनशीलता के साथ सहसंबद्ध होता है। कीटों या कवक के लिए तने और निचली पत्तियों का निरीक्षण करें।",
+    plan_expert_intervention: "विशेषज्ञ हस्तक्षेप",
+    desc_expert_intervention: "तनाव का स्तर गंभीर है। हम तुरंत एक कृषि विशेषज्ञ से संपर्क करने की सिफारिश करते हैं।",
+
+    analysis_failed: "विश्लेषण विफल रहा। कृपया सुनिश्चित करें कि नमूना स्पष्ट रूप से दिखाई दे रहा है।",
+    error_invalid_specimen: "छवि एक वैध पौधे के नमूने की तरह नहीं लगती है। कृपया पत्ती पर ध्यान केंद्रित करें।",
+
+    /* ---------- NIR SUMMARY PAGE ---------- */
+    // leaf_health_index: "पत्ती स्वास्थ्य सूचकांक", // Moved/replaced
+    // analyzed_specimen: "विश्लेषण किया गया नमूना", // Moved/replaced
+    ground_capture: "उच्च-रिज़ॉल्यूशन एनआईआर ग्राउंड कैप्चर",
+    how_it_works_title: "ग्राउंड एनआईआर कैसे काम करता है",
+    how_it_works_desc: "हमारा मॉडल नियर-इन्फ्रारेड स्पेक्ट्रम में परावर्तित प्रकाश पैटर्न का विश्लेषण करता है। सेलुलर तनाव इन पैटर्न में किसी भी दृश्यमान पीलापन होने से पहले दिखाई देता है।",
+    biologic_header: "विशेषज्ञ की सिफारिश",
+    new_scan_btn: "← नया स्कैन",
+
+    /* ---------- ABOUT PAGE ---------- */
+    about_hero_badge: "भारतीय किसानों को सशक्त बनाना",
+    about_hero_h1: "हर एकड़ के लिए बुद्धिमत्ता",
+    about_desc: "टेरास्कोप विश्व-स्तरीय उपग्रह इमेजरी को ऑन-ग्राउंड एनआईआर इमेजिंग के साथ जोड़ता है ताकि किसानों को उनके खेत के स्वास्थ्य का 360-डिग्री दृश्य प्रदान किया जा सके।",
+    about_macro_title: "मैक्रो इंटेलिजेंस",
+    about_macro_desc: "सेंटिनल-2 उपग्रह नक्षत्रों का उपयोग करके, हम पूरे गांवों में नमी के तनाव का पता लगाने के लिए आपके खेतों की अंतरिक्ष से निगरानी करते हैं।",
+    about_micro_title: "माइक्रो इंटेलिजेंस",
+    about_micro_desc: "हमारी ग्राउंड एनआईआर तकनीक स्मार्टफोन की व्यक्तिगत पत्तियों की तस्वीरों को संसाधित करती है ताकि मानव आंख को अदृश्य तनाव के लक्षणों का पता लगाया जा सके।",
+    about_mission_title: "हमारा लक्ष्य",
+    about_mission_desc: "हम मानते हैं कि डेटा-संचालित खेती मुफ्त और सुलभ होनी चाहिए ताकि उर्वरक की बर्बादी को कम करने और पैदावार बढ़ाने में मदद मिल सके।",
+    about_cta_title: "शुरू करने के लिए तैयार हैं?",
+    about_cta_btn: "मेरे खेत का विश्लेषण करें",
+
+    /* ---------- NDVI LEGEND ---------- */
     no_vegetation: "कोई वनस्पति नहीं", dense_crops: "घनी फसल"
   },
 
@@ -328,16 +494,22 @@ const translations = {
 
     step_1: "पायरी 1 / 2 — शेत निवडा",
     select_title: "तुमचे शेताची जागा निवडा",
-    select_sub: "शेतजमीन शोधण्याची पد्धत निवडा, मग पिक निवडा।",
-    selection_method: "शेत निवड पد्धत",
+    select_sub: "शेतजमीन शोधण्याची पदधत निवडा, मग पिक निवडा।",
+    selection_method: "शेत निवड पदधत",
     mode_point: "बिंदू (जलद)", mode_polygon: "सीमा (अचूक)",
-    mode_satbara: "सातबारा / 7-12", recommended_badge: "शिफारस",
+    mode_satbara: "गावाचा तपशील",
+    village_name: "गावाचे नाव",
+    survey_number: "शेत / सर्वे नंबर",
+    locate_village_btn: "नकाशावर शेत शोधा",
+    recommended_badge: "शिफारस",
     crop_label: "या शेतावर ची पिक",
     crop_general: "साधारण", crop_rice: "भात", crop_wheat: "गहूं",
     crop_cotton: "कापूस", crop_sugarcane: "उस", crop_soybean: "सोयाबीन",
     satbara_title: "सातबारा / 7-12 जमीन नोंद",
     satbara_info: "गावाचे नाव आणि सर्वे नंबर टाका. आम्ही नकाशावर गाव शोधू।",
-    locate_village_btn: "नकाशावर गाव शोधा",
+    // locate_village_btn: "नकाशावर गाव शोधा", // Duplicate key, removed.
+    // village_name: "गावाचे नाव", // Duplicate key, removed.
+    // survey_number: "शेत / सर्वे नंबर", // Duplicate key, removed.
     use_location: "माझी जागा वापरा",
     no_location: "कोणतीही जागा निवडलेली नाही",
     analyze_btn: "शेत विश्लेषण करा →",
@@ -352,7 +524,61 @@ const translations = {
     feat1_title: "खरे उपग्रह डेटा", feat2_title: "पीक तणाव शोध",
     feat3_title: "माती ओलावा", feat4_title: "सातबारा पर्याय",
     feat5_title: "3 भाषा", feat6_title: "सेकंदात निकाल",
-    no_vegetation: "वनस्पती नाही", dense_crops: "घन पिक"
+    no_vegetation: "वनस्पती नाही", dense_crops: "घन पिक",
+
+    /* ---------- NIR UPLOAD PAGE ---------- */
+    nir_upload_title: "ग्राउंड एनआईआर स्कॅन",
+    nir_upload_sub: "सूक्ष्म स्तरावरील आरोग्यासाठी वैयक्तिक पानांचे विश्लेषण करा.",
+    nir_how_title: "एनआईआर फोटो कसा घ्यावा?",
+    nir_step_1: "एनआईआर लेन्स वापरा",
+    nir_step_2: "समान प्रकाश",
+    nir_step_3: "स्पष्ट फोकस",
+    nir_prompt: "एनआईआर कॅमेरा फोटो अपलोड करण्यासाठी टॅप करा",
+    nir_analyze_btn: "पानाचे आरोग्य विश्लेषण करा →",
+    nir_processing: "एआय सेल्युलर आरोग्याचे विश्लेषण करत आहे...",
+    nir_wait: "याला सहसा 2-3 सेकंद लागतात",
+
+    /* ---------- NIR SUMMARY PAGE UPGRADE ---------- */
+    ground_leaf_analysis: "ग्राउंड लेव्हल एनआयआर विश्लेषण",
+    analyzed_specimen: "विश्लेषण केलेला नमुना",
+    early_stress_detection: "दृश्य लक्षणांपूर्वी सुरुवातीच्या तणावाचा शोध।",
+    stress_score_label: "ताण गुण",
+    actionable_insights: "कृती करण्यायोग्य अंतर्दृष्टी",
+    stress_detection_range: "ताण शोधण्याची श्रेणी",
+    geo_tagged: "जिओ-टॅग केलेले",
+
+    status_healthy: "निरोगी",
+    status_moderate: "मध्यम",
+    status_critical: "गंभीर",
+    status_severe: "अतिशय गंभीर",
+
+    priority_low: "कमी",
+    priority_normal: "सामान्य",
+    priority_medium: "मध्यम",
+    priority_high: "उच्च",
+    priority_urgent: "तातडीचे",
+
+    plan_maintain_routine: "दिनचर्या चालू ठेवा",
+    desc_maintain_routine: "तुमच्या नमुन्यात कोणताही महत्त्वपूर्ण ताण दिसत नाही. तुमचे मानक सिंचन आणि खत वेळापत्रक चालू ठेवा.",
+    plan_next_inspection: "पुढील तपासणी",
+    desc_next_inspection: "सातत्यपूर्ण स्थिरता सुनिश्चित करण्यासाठी ७ दिवसांत तुमच्या पुढील एनआयआर (NIR) ग्राउंड तपासणीची योजना करा.",
+
+    plan_optimize_irrigation: "सिंचन सुधारा",
+    desc_optimize_irrigation: "सुरुवातीचा ओलावा ताण आढळला. मुळांच्या क्षेत्राला पुरेसे पाणी मिळत असल्याची खात्री करा. मातीच्या कडकपणाची तपासणी करा.",
+    plan_nutrient_boost: "पोषक तत्वे वाढवा",
+    desc_nutrient_boost: "रोपाला सुरुवातीच्या ताणातून सावरण्यास मदत करण्यासाठी सूक्ष्म खनिजांसह हलक्या फोलियर स्प्रेचा विचार करा.",
+    plan_monitor_daily: "दररोज निरीक्षण करा",
+    desc_monitor_daily: "लक्षणे पसरत आहेत का यावर लक्ष ठेवा. प्रगतीचा मागोवा घेण्यासाठी ४८ तासांत या क्षेत्राची पुन्हा स्कॅन करा.",
+
+    plan_emergency_watering: "तातडीचे पाणी देणे",
+    desc_emergency_watering: "गंभीर ताण आढळला. उतींचे कायमस्वरूपी नुकसान टाळण्यासाठी त्वरित खोल सिंचन सुरू करा.",
+    plan_disease_inspection: "रोग तपासणी",
+    desc_disease_inspection: "उच्च ताण अनेकदा रोगाच्या संवेदनशीलतेशी संबंधित असतो. कीड किंवा बुरशीसाठी खोड आणि खालच्या पानांचे निरीक्षण करा.",
+    plan_expert_intervention: "तज्ञांचा सल्ला",
+    desc_expert_intervention: "ताण पातळी गंभीर आहे. आम्ही त्वरित कृषी तज्ञाशी संपर्क साधण्याची शिफारस करतो।",
+
+    analysis_failed: "विश्लेषण अयशस्वी झाले. कृपया नमुना स्पष्टपणे दिसत असल्याची खात्री करा.",
+    error_invalid_specimen: "ही प्रतिमा वैध वनस्पती नमुन्यासारखी दिसत नाही. कृपया पानावर लक्ष केंद्रित करा।"
   }
 
 };
