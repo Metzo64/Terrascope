@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Leaf Health Summary – TerraScope</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/theme.js"></script>
+    <style>
+        :root {
+            --olive-main: #6B8E23;
+            --olive-dark: #4A631D;
+            --bg-page: #F7F8F0;
+            --text-black: #1A1A1A;
+        }
+
+        body {
+            background: var(--bg-page);
+            color: var(--text-black);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            transition: background 0.3s;
+        }
+
+        .sum-layout {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+        }
+
+        .main-panel,
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sum-card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── Header Area ── */
+        .sum-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .sum-header h2 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .sum-header p {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0 0;
+        }
+
+        /* ── Status Pill ── */
+        .status-pill {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 900;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+
+        /* ── Gauge & Score ── */
+        .gauge-section {
+            text-align: center;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .score-display {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .score-num {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1;
+            display: block;
+        }
+
+        .score-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #BBB;
+            letter-spacing: 2.5px;
+        }
+
+        /* ── Stress Breakdown Zone ── */
+        .breakdown-zone {
+            background: #fff;
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid #EEE;
+        }
+
+        .zone-header {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--olive-dark);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .gradient-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #4CAF50, #FFEB3B, #FF9800, #F44336);
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .bar-pointer {
+            width: 4px;
+            height: 12px;
+            background: #000;
+            border-radius: 2px;
+            position: absolute;
+            top: -2px;
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .zone-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .zone-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #AAA;
+        }
+
+        .zone-label.active {
+            color: #000;
+            font-weight: 800;
+        }
+
+        /* ── Action Step Cards ── */
+        .action-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .action-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            border: 1px solid #F0F0F0;
+            transition: transform 0.2s;
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 24px;
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .action-title {
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .action-priority {
+            font-size: 9px;
+            font-weight: 900;
+            padding: 4px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .action-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        @media (max-width: 900px) {
+            .sum-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+
+<body data-auth="required">
+    <header class="navbar">
+        <div class="logo" onclick="location.href='index.html'" style="cursor:pointer">
+            <h1>TerraScope</h1>
+            <span data-key="tagline">Micro Intelligence</span>
+        </div>
+        <div class="nav-right">
+            <a href="nir_upload.html" class="nav-link" data-key="new_scan_btn">← New Scan</a>
+            <button id="themeToggle" onclick="toggleTheme()"></button>
+        </div>
+    </header>
+
+    <main class="sum-layout">
+        <div class="main-panel">
+
+            <div class="sum-header">
+                <div>
+                    <h2 data-key="ground_leaf_analysis">Ground Level NIR Analysis</h2>
+                    <p data-key="early_stress_detection">Early stress detection before visible symptoms.</p>
+                </div>
+                <div style="padding: 12px; background: rgba(107, 142, 35, 0.1); border-radius: 50%; color: #6B8E23;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                        </path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="sum-card" style="text-align: center;">
+                <div id="statusPill" class="status-pill" style="background: rgba(76, 175, 80, 0.1); color: #4CAF50;">
+                    HEALTHY
+                </div>
+
+                <div class="gauge-section">
+                    <svg width="280" height="160" viewBox="0 0 220 120">
+                        <!-- Background arc -->
+                        <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#F0F0F0" stroke-width="18"
+                            stroke-linecap="round" />
+                        <!-- Active arc -->
+                        <path id="gaugeActive" d="M 20 110 A 90 90 0 0 1 20 110" fill="none" stroke="#4CAF50"
+                            stroke-width="18" stroke-linecap="round"
+                            style="transition: stroke-dasharray 1s ease-out;" />
+
+                        <!-- Ticks -->
+                        <g id="gaugeTicks"></g>
+                    </svg>
+
+                    <div class="score-display">
+                        <span id="scoreNum" class="score-num">0</span>
+                        <span class="score-label" data-key="stress_score_label">STRESS SCORE</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="breakdown-zone">
+                <div class="zone-header" data-key="stress_detection_range">STRESS DETECTION RANGE</div>
+                <div class="gradient-bar">
+                    <div id="barPointer" class="bar-pointer" style="left: 0%;"></div>
+                </div>
+                <div class="zone-labels">
+                    <span id="labelHealthy" class="zone-label" data-key="status_healthy">Healthy</span>
+                    <span id="labelModerate" class="zone-label" data-key="status_moderate">Moderate</span>
+                    <span id="labelCritical" class="zone-label" data-key="status_critical">Critical</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 8px;">
+                <h4 class="zone-header" data-key="actionable_insights">Actionable Insights</h4>
+                <div id="actionCards" class="action-cards">
+                    <!-- Action cards injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="sum-card" style="padding:0; overflow:hidden;">
+                <img id="sumLeafImg" style="width:100%; height:320px; object-fit:cover; display: block;">
+                <div style="padding:24px; position: relative;">
+                    <div
+                        style="position: absolute; top: -16px; right: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); color: #FFF; padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span data-key="geo_tagged">GEO-TAGGED</span>
+                    </div>
+                    <h4 data-key="analyzed_specimen" style="margin: 0; font-size: 18px;">Analyzed Specimen</h4>
+                    <p data-key="ground_capture" style="font-size:13px; color:#888; margin-top:4px;">High-resolution NIR
+                        ground capture</p>
+                </div>
+            </div>
+
+            <div class="sum-card">
+                <h4 data-key="how_it_works_title" style="margin-bottom:12px; font-size: 16px;">How Ground NIR Works</h4>
+                <p data-key="how_it_works_desc" style="font-size:14px; color:#666; line-height:1.7; margin: 0;">
+                    Our model analyzes reflected light patterns in the Near-Infrared spectrum. Cellular stress shows up
+                    in these patterns before any visible yellowing occurs.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/lang.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const resRaw = localStorage.getItem("nir_result");
+            const imgRaw = localStorage.getItem("nir_image_preview");
+
+            if (!resRaw || !imgRaw) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            const res = JSON.parse(resRaw);
+            const score = parseFloat(res.stress_score);
+            const lang = localStorage.getItem("lang") || "en";
+
+            // 1. Setup Image
+            document.getElementById("sumLeafImg").src = imgRaw;
+
+            // 2. Setup Gauge Ticks
+            const ticksGroup = document.getElementById("gaugeTicks");
+            for (let i = 0; i <= 10; i++) {
+                const angle = Math.PI + (Math.PI * (i / 10));
+                const x1 = 110 + (90 - 12) * Math.cos(angle);
+                const y1 = 110 + (90 - 12) * Math.sin(angle);
+                const x2 = 110 + (90 + 2) * Math.cos(angle);
+                const y2 = 110 + (90 + 2) * Math.sin(angle);
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+                line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+                line.setAttribute("stroke", "#DDD"); line.setAttribute("stroke-width", "2");
+                ticksGroup.appendChild(line);
+            }
+
+            // 3. Determine Level & Colors
+            let levelKey = "status_healthy";
+            let color = "#4CAF50";
+            let bgColor = "rgba(76, 175, 80, 0.1)";
+
+            if (score >= 60) {
+                levelKey = "status_critical";
+                color = "#D32F2F";
+                bgColor = "rgba(211, 47, 47, 0.1)";
+            } else if (score >= 25) {
+                levelKey = "status_moderate";
+                color = "#FF9800";
+                bgColor = "rgba(255, 152, 0, 0.1)";
+            }
+
+            // 4. Update UI Elements
+            const statusPill = document.getElementById("statusPill");
+            statusPill.textContent = t(levelKey).toUpperCase();
+            statusPill.style.color = color;
+            statusPill.style.backgroundColor = bgColor;
+
+            const scoreNum = document.getElementById("scoreNum");
+            scoreNum.style.color = color;
+
+            const activeArc = document.getElementById("gaugeActive");
+            activeArc.setAttribute("stroke", color);
+
+            const pointer = document.getElementById("barPointer");
+            pointer.style.left = `${score}%`;
+
+            // Active breakdown label
+            if (score < 25) document.getElementById("labelHealthy").classList.add("active");
+            else if (score < 60) document.getElementById("labelModerate").classList.add("active");
+            else document.getElementById("labelCritical").classList.add("active");
+
+            // 5. Animate Gauge & Score
+            let currentDisplay = 0;
+            const step = score / 50;
+            const anim = setInterval(() => {
+                currentDisplay += step;
+                if (currentDisplay >= score) {
+                    currentDisplay = score;
+                    clearInterval(anim);
+                }
+
+                // Update Number
+                scoreNum.textContent = Math.round(currentDisplay);
+
+                // Update Arc (SVG stroke-dasharray/offset trick or just redraw)
+                const endAngle = Math.PI + (Math.PI * (currentDisplay / 100));
+                const x = 110 + 90 * Math.cos(endAngle);
+                const y = 110 + 90 * Math.sin(endAngle);
+                activeArc.setAttribute("d", `M 20 110 A 90 90 0 0 1 ${x} ${y}`);
+            }, 20);
+
+            // 6. Generate Action Plan
+            renderActionPlan(score);
+        });
+
+        function renderActionPlan(score) {
+            const container = document.getElementById("actionCards");
+            container.innerHTML = "";
+
+            let plan = [];
+            if (score < 25) {
+                plan = [
+                    { title: t('plan_maintain_routine'), desc: t('desc_maintain_routine'), icon: '✅', priority: t('priority_normal'), color: '#4CAF50' },
+                    { title: t('plan_next_inspection'), desc: t('desc_next_inspection'), icon: '📅', priority: t('priority_low'), color: '#607D8B' }
+                ];
+            } else if (score < 60) {
+                plan = [
+                    { title: t('plan_optimize_irrigation'), desc: t('desc_optimize_irrigation'), icon: '💧', priority: t('priority_high'), color: '#FF9800' },
+                    { title: t('plan_nutrient_boost'), desc: t('desc_nutrient_boost'), icon: '🧪', priority: t('priority_medium'), color: '#FFB300' },
+                    { title: t('plan_monitor_daily'), desc: t('desc_monitor_daily'), icon: '👀', priority: t('priority_medium'), color: '#546E7A' }
+                ];
+            } else {
+                plan = [
+                    { title: t('plan_emergency_watering'), desc: t('desc_emergency_watering'), icon: '⚠️', priority: t('priority_urgent'), color: '#D32F2F' },
+                    { title: t('plan_disease_inspection'), desc: t('desc_disease_inspection'), icon: '🔍', priority: t('priority_urgent'), color: '#F44336' },
+                    { title: t('plan_expert_intervention'), desc: t('desc_expert_intervention'), icon: '👨‍🌾', priority: t('priority_high'), color: '#3F51B5' }
+                ];
+            }
+
+            plan.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "action-card";
+                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                card.style.opacity = 0;
+
+                card.innerHTML = `
+                    <div class="action-icon" style="background: ${item.color}15; color: ${item.color};">
+                        ${item.icon}
+                    </div>
+                    <div class="action-content">
+                        <div class="action-top">
+                            <span class="action-title">${item.title}</span>
+                            <span class="action-priority" style="background: ${item.color}15; color: ${item.color};">${item.priority}</span>
+                        </div>
+                        <p class="action-desc">${item.desc}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</body>
+
+</html>

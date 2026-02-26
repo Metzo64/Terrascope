@@ -9,9 +9,27 @@
   <!-- ⚡ theme MUST run before first paint -->
   <script src="js/theme.js"></script>
   <style>
-    /* ─── PAGE BASE ─────────────────────────────────────────── */
+    /* ─── REFINED TINTING (FIXED) ─────────────────────────── */
+    html {
+      background-color: var(--bg-page);
+    }
+
     body {
-      background: var(--bg-page);
+      background-color: var(--bg-page);
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    body.health-danger {
+      background-image: linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, transparent 400px);
+    }
+
+    body.health-warning {
+      background-image: linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, transparent 400px);
+    }
+
+    body.health-good {
+      background-image: linear-gradient(180deg, rgba(34, 197, 94, 0.12) 0%, transparent 400px);
     }
 
     /* ─── NAVBAR ─────────────────────────────────────────────── */
@@ -197,33 +215,18 @@
       gap: 8px;
     }
 
-    /* Health-state page tinting */
-    body.health-danger {
-      background: linear-gradient(180deg, #2d0a0a 0%, var(--bg-page) 280px);
-    }
 
-    body.health-warning {
-      background: linear-gradient(180deg, #2d1a00 0%, var(--bg-page) 280px);
-    }
-
+    /* Subtle Card highlight */
     body.health-danger .dash-section:first-child {
-      border-color: #c62828;
+      border-color: rgba(239, 68, 68, 0.3);
     }
 
     body.health-warning .dash-section:first-child {
-      border-color: #e65100;
+      border-color: rgba(245, 158, 11, 0.3);
     }
 
-    html[data-theme="dark"].health-danger body {
-      background: linear-gradient(180deg, #3b0808 0%, #0d1a07 280px);
-    }
-
-    html[data-theme="dark"] body.health-danger {
-      background: linear-gradient(180deg, #3b0808 0%, #0d1a07 280px) !important;
-    }
-
-    html[data-theme="dark"] body.health-warning {
-      background: linear-gradient(180deg, #3b1f00 0%, #0d1a07 280px) !important;
+    body.health-good .dash-section:first-child {
+      border-color: rgba(34, 197, 94, 0.3);
     }
 
     /* ─── OVERALL MINI GRID ──────────────────────────────────── */
@@ -257,34 +260,34 @@
 
     .mini-box .mb-tag {
       display: inline-block;
-      margin-top: 6px;
-      padding: 2px 10px;
+      margin-top: 8px;
+      padding: 4px 14px;
       border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       color: #fff;
+      text-transform: uppercase;
     }
 
     .tag-excellent {
-      background: #2e7d32;
+      background: #1b5e20;
     }
 
     .tag-good {
-      background: #66bb6a;
-      color: #1a3b1a;
+      background: #2e7d32;
     }
 
     .tag-fair {
-      background: #fdd835;
-      color: #5a4200;
+      background: #f9a825;
+      color: #000;
     }
 
     .tag-warning {
-      background: #fb8c00;
+      background: #ef6c00;
     }
 
     .tag-danger {
-      background: #e53935;
+      background: #c62828;
     }
 
     /* ─── EXPLAIN CARDS ──────────────────────────────────────── */
@@ -374,30 +377,32 @@
     /* ─── BADGE ──────────────────────────────────────────────── */
     .status-badge {
       display: inline-block;
-      padding: 5px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 24px;
+      font-size: 18px;
+      font-weight: 800;
       color: #fff;
-      margin-bottom: 8px;
-      letter-spacing: .3px;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .badge-excellent {
-      background: #2e7d32;
+      background: #1b5e20;
     }
 
     .badge-good {
-      background: #43a047;
+      background: #2e7d32;
     }
 
     .badge-fair {
       background: #f9a825;
-      color: #3e2000;
+      color: #000;
     }
 
     .badge-warning {
-      background: #e65100;
+      background: #ef6c00;
     }
 
     .badge-danger {

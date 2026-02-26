@@ -26,7 +26,8 @@
     /* full-viewport split under navbar */
     .select-shell {
       display: grid;
-      grid-template-columns: 380px 1fr;
+      grid-template-columns: 420px 1fr;
+      /* Increased sidebar width slightly */
       height: calc(100vh - 56px);
       overflow: hidden;
     }
@@ -417,15 +418,26 @@
     }
 
     /* ── MAP AREA ─────────────────────────────────────── */
-    .sel-map-area {
-      position: relative;
-    }
-
     #map {
       width: 100%;
       height: 100% !important;
       margin: 0 !important;
       border-radius: 0 !important;
+      /* Subtle border on the left to separate from sidebar */
+      border-left: 1px solid var(--border-col) !important;
+    }
+
+    .sel-map-area {
+      position: relative;
+      background: var(--bg-page);
+      padding: 20px;
+      /* Added padding to make the map feel "smaller" and contained */
+    }
+
+    #map {
+      border-radius: 20px !important;
+      /* Rounded corners for the map box */
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
 
     .map-disabled {
@@ -512,47 +524,43 @@
         <div class="sel-label" data-key="selection_method">Field Selection Method</div>
         <div class="mode-cards">
           <div class="mode-card active" data-mode="point" onclick="setMode('point')">
-            <span class="mc-icon">📍</span>
-            <div>
-              <div class="mc-title" data-key="mode_point">Point (Quick)</div>
-              <div class="mc-sub">Tap any spot on your field</div>
-            </div>
+            <div class="mc-title" data-key="mode_point">Point (Quick)</div>
+            <div class="mc-sub">Tap any spot on your field</div>
           </div>
           <div class="mode-card" data-mode="polygon" onclick="setMode('polygon')">
-            <span class="mc-icon">🗺️</span>
-            <div>
-              <div class="mc-title" data-key="mode_polygon">Boundary (Accurate)</div>
-              <div class="mc-sub">Draw your field outline</div>
-            </div>
+            <div class="mc-title" data-key="mode_polygon">Boundary (Accurate)</div>
+            <div class="mc-sub">Draw your field outline</div>
           </div>
           <div class="mode-card" data-mode="satbara" onclick="setMode('satbara')">
-            <span class="mc-icon">📋</span>
-            <div>
-              <div class="mc-title" data-key="mode_satbara">Satbara / 7-12</div>
-              <div class="mc-sub">Enter survey number</div>
-            </div>
+            <div class="mc-title" data-key="mode_satbara">Village Details</div>
+            <div class="mc-sub">Locate via village info</div>
           </div>
         </div>
 
-        <!-- Satbara Inputs -->
+        <!-- Village Details Inputs (formerly Satbara) -->
         <div id="satbaraBox" style="display:none">
           <label data-key="village_name">Village Name</label>
           <input id="villageName" type="text" placeholder="e.g. Nashik" />
-          <label data-key="survey_number">Survey Number</label>
+          <label data-key="survey_number">Plot / Survey Number</label>
           <input id="surveyNumber" type="text" placeholder="e.g. 42/1" />
-          <button id="locateVillageBtn" data-key="locate_village_btn">Locate Village on Map</button>
+          <button id="locateVillageBtn" data-key="locate_village_btn">Locate Plot on Map</button>
         </div>
 
         <!-- Crop Selection -->
         <div class="sel-label" style="margin-top:12px" data-key="crop_label">Crop Grown</div>
         <div class="crop-chips">
-          <div class="crop-chip active" data-crop="general" onclick="setCrop(this)" data-key="crop_general">General
+          <div class="crop-chip active" data-crop="general" onclick="setCrop(this)">📍 <span
+              data-key="crop_general">General</span></div>
+          <div class="crop-chip" data-crop="rice" onclick="setCrop(this)">🌾 <span data-key="crop_rice">Rice</span>
           </div>
-          <div class="crop-chip" data-crop="rice" onclick="setCrop(this)" data-key="crop_rice">Rice</div>
-          <div class="crop-chip" data-crop="wheat" onclick="setCrop(this)" data-key="crop_wheat">Wheat</div>
-          <div class="crop-chip" data-crop="cotton" onclick="setCrop(this)" data-key="crop_cotton">Cotton</div>
-          <div class="crop-chip" data-crop="sugarcane" onclick="setCrop(this)" data-key="crop_sugarcane">Sugarcane</div>
-          <div class="crop-chip" data-crop="soybean" onclick="setCrop(this)" data-key="crop_soybean">Soybean</div>
+          <div class="crop-chip" data-crop="wheat" onclick="setCrop(this)">🌾 <span data-key="crop_wheat">Wheat</span>
+          </div>
+          <div class="crop-chip" data-crop="cotton" onclick="setCrop(this)">☁️ <span
+              data-key="crop_cotton">Cotton</span></div>
+          <div class="crop-chip" data-crop="sugarcane" onclick="setCrop(this)">🎋 <span
+              data-key="crop_sugarcane">Sugarcane</span></div>
+          <div class="crop-chip" data-crop="soybean" onclick="setCrop(this)">🫘 <span
+              data-key="crop_soybean">Soybean</span></div>
         </div>
 
         <!-- Use Location -->

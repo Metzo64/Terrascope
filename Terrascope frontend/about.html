@@ -1,38 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>About – TerraScope</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <style>
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      transition: background 0.3s;
+    }
+
+    .about-hero {
+      padding: 100px 24px 60px;
+      text-align: center;
+      background: radial-gradient(circle at 50% 0%, var(--accent-soft), transparent 70%);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      padding: 40px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .about-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 24px;
+      padding: 32px;
+      transition: transform 0.3s ease;
+    }
+
+    .about-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .icon-box {
+      font-size: 32px;
+      margin-bottom: 20px;
+      display: inline-block;
+      padding: 16px;
+      background: var(--accent-soft);
+      border-radius: 16px;
+    }
+
+    .about-content {
+      max-width: 800px;
+      margin: 0 auto 60px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      font-size: 17px;
+    }
+
+    @media (max-width: 768px) {
+      .about-hero {
+        padding-top: 60px;
+      }
+    }
+  </style>
 </head>
-<body class="fade-in">
 
-<header class="navbar">
-  <div class="logo">
-    <h1>TerraScope</h1>
-    <span>About the Platform</span>
+<body data-auth="optional">
+  <header class="navbar">
+    <div class="logo" onclick="location.href='index.html'" style="cursor:pointer">
+      <h1>TerraScope</h1>
+      <span data-key="tagline">About the Platform</span>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="nav-link" data-key="back_home">← Home</a>
+      <button id="themeToggle" onclick="toggleTheme()"></button>
+    </div>
+  </header>
+
+  <section class="about-hero">
+    <div class="hero-chip" style="margin: 0 auto 20px;">
+      <span class="chip-dot"></span>
+      <span data-key="about_hero_badge">EMPOWERING INDIAN FARMERS</span>
+    </div>
+    <h1 class="hero-h1" data-key="about_hero_h1">Intelligence for Every Acre</h1>
+    <p class="about-content" data-key="about_desc">
+      TerraScope combines world-class satellite imagery with on-ground NIR imaging to provide farmers with a 360-degree
+      view of their field's health.
+    </p>
+  </section>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="icon-box">🛰️</div>
+      <h3 data-key="about_macro_title">Macro Intelligence</h3>
+      <p data-key="about_macro_desc">Using Sentinel-2 satellite constellations, we monitor your fields from space to
+        detect moisture stress across entire villages.</p>
+    </div>
+
+    <div class="about-card">
+      <div class="icon-box">📸</div>
+      <h3 data-key="about_micro_title">Micro Intelligence</h3>
+      <p data-key="about_micro_desc">Our Ground NIR technology processes smartphone photos of individual leaves to
+        detect stress symptoms invisible to the human eye.</p>
+    </div>
+
+    <div class="about-card">
+      <div class="icon-box">🤝</div>
+      <h3 data-key="about_mission_title">Our Mission</h3>
+      <p data-key="about_mission_desc">We believe data-driven farming should be free and accessible to help reduce
+        fertilizer waste and increase yields.</p>
+    </div>
   </div>
-</header>
 
-<section class="container">
-  <h2>What is TerraScope?</h2>
-  <p>
-    TerraScope is a decision-support platform designed to help farmers
-    and agronomists understand crop and soil conditions using satellite data.
-  </p>
+  <section style="padding: 60px 24px; text-align: center; border-top: 1px solid var(--border-col);">
+    <h2 data-key="about_cta_title" style="margin-bottom:20px">Ready to start?</h2>
+    <a href="select.html" class="cta-primary" style="display:inline-block" data-key="about_cta_btn">Analyze My Field</a>
+  </section>
 
-  <h3>Data Sources</h3>
-  <ul>
-    <li>Sentinel-2 multispectral satellite imagery</li>
-    <li>Field-level location selection</li>
-    <li>Conceptual NIR-based soil analysis (future scope)</li>
-  </ul>
-
-  <h3>Important Note</h3>
-  <p>
-    TerraScope provides advisory insights and does not replace
-    laboratory soil testing or professional agronomic consultation.
-  </p>
-</section>
-
+  <script src="js/lang.js"></script>
 </body>
+
 </html>
